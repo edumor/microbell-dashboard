@@ -273,7 +273,7 @@
     <div class="chart-sub">Venta U$S acumulada + stock disponible</div>
     <div class="table-wrap">
       <table id="tableArticulos">
-        <thead><tr><th>#</th><th>Artículo</th><th>Venta U$S</th><th>Stock Actual</th><th>Estado Stock</th></tr></thead>
+        <thead><tr><th>#</th><th style="text-align:left">Artículo</th><th>Venta U$S</th><th>Costo U$S</th><th>% Margen</th><th>Stock 13/03</th><th>Estado</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
@@ -447,31 +447,58 @@ const DATA_SR_MONTHLY = {"2025-03":{"Outdoors":61540.20,"Jugueteria":35837.84,"T
 
 const DATA_GV_MONTHLY = {"2025-03":{"Indirectas":94930.31,"Ecommerce":25007.49,"Vdores. Directas":15049.63,"Hipermercados":8071.58,"Gerencia":3258.87},"2025-04":{"Indirectas":132736.39,"Hipermercados":59995.94,"Ecommerce":28536.74,"Vdores. Directas":27317.01,"Gerencia":1099.86},"2025-05":{"Indirectas":136084.18,"Vdores. Directas":33903.32,"Gerencia":59416.52,"Ecommerce":13712.95,"Hipermercados":2249.22},"2025-06":{"Indirectas":128478.21,"Hipermercados":80595.61,"Vdores. Directas":34166.42,"Gerencia":29598.20,"Ecommerce":11710.67},"2025-07":{"Indirectas":152253.58,"Vdores. Directas":52976.32,"Gerencia":31875.16,"Ecommerce":17216.08,"Hipermercados":18262.33},"2025-08":{"Indirectas":192027.96,"Gerencia":28604.51,"Ecommerce":20542.50,"Vdores. Directas":6439.90},"2025-09":{"Indirectas":194297.87,"Gerencia":25215.83,"Ecommerce":16399.45,"Vdores. Directas":11460.34},"2025-10":{"Indirectas":214127.91,"Vdores. Directas":29264.10,"Ecommerce":19076.37},"2025-11":{"Indirectas":143038.77,"Hipermercados":119922.54,"Vdores. Directas":31816.32,"Ecommerce":18010.94,"Gerencia":9243.20},"2025-12":{"Indirectas":420094.40,"Ecommerce":73442.52,"Gerencia":25708.69,"Vdores. Directas":25276.41},"2026-01":{"Indirectas":239934.17,"Ecommerce":121682.62,"Gerencia":6249.74,"Vdores. Directas":17642.48},"2026-02":{"Gerencia":40974.23,"Ecommerce":39110.55,"Hipermercados":10306.00,"Indirectas":9637.90,"Vdores. Directas":2086.37}};
 
-const DATA_VEND_MONTHLY = {"2025-03":{"Sofia Miguel":19929.43,"Krafft Ariel":17342.33,"Alvarez Fernando":23271.92,"Ecommerce":25007.49,"Chaves Martin":12626.62,"Ttc":8071.58,"Saroka Hugo":3769.77,"Arenales Hernan":9533.89,"Chalin Alejandro":2435.60,"Laje Fernando":2786.57,"Krafft Diego":1215.32,"Autilio Marcelo":1986.04,"Rossi Juan Manuel":1459.28,"Microbell":472.30,"Pacce Sergio":80.41},"2025-04":{"Sofia Miguel":48793.89,"Ttc":59995.94,"Alvarez Fernando":29114.43,"Chaves Martin":25804.83,"Arenales Hernan":24300.87,"Ecommerce":28536.74,"Krafft Ariel":2226.16,"Autilio Marcelo":3999.49,"Chalin Alejandro":2338.92,"Saroka Hugo":6253.34,"Microbell":2089.57,"Krafft Diego":864.77,"Laje Fernando":-989.72,"Rossi Juan Manuel":131.10,"Pacce Sergio":-304.31},"2025-05":{"Krafft Ariel":47046.18,"Alvarez Fernando":36604.11,"Chaves Martin":32898.47,"Microbell":58308.36,"Ecommerce":13712.95,"Autilio Marcelo":3500.28,"Chalin Alejandro":9382.02,"Arenales Hernan":6238.36,"Ttc":2249.22,"Sofia Miguel":10363.15,"Saroka Hugo":1817.43,"Laje Fernando":1108.16,"Pacce Sergio":978.65,"Krafft Diego":56.44,"Rossi Juan Manuel":-444.08},"2025-06":{"Ttc":80595.61,"Krafft Ariel":47853.04,"Alvarez Fernando":42140.00,"Chaves Martin":33464.79,"Laje Fernando":22811.66,"Ecommerce":11710.67,"Gerencia":29598.20,"Saroka Hugo":3974.25,"Arenales Hernan":4665.36,"Chalin Alejandro":4066.01,"Microbell":6786.54,"Pacce Sergio":2526.13,"Autilio Marcelo":2105.84,"Krafft Diego":1175.78,"Rossi Juan Manuel":115.69},"2025-07":{"Krafft Ariel":61941.14,"Chaves Martin":37326.46,"Ttc":18262.33,"Laje Fernando":27471.89,"Ecommerce":17216.08,"Sofia Miguel":15608.95,"Alvarez Fernando":24019.82,"Autilio Marcelo":7759.24,"Chalin Alejandro":7663.03,"Saroka Hugo":1016.54,"Microbell":4403.27,"Pacce Sergio":5669.68,"Rossi Juan Manuel":12434.13,"Arenales Hernan":3761.88,"Krafft Diego":0},"2025-08":{"Alvarez Fernando":65929.05,"Sofia Miguel":37935.04,"Ecommerce":20542.50,"Chalin Alejandro":23491.00,"Krafft Ariel":16751.01,"Laje Fernando":16490.93,"Saroka Hugo":6011.14,"Arenales Hernan":10907.67,"Pacce Sergio":10328.42,"Microbell":4906.11,"Autilio Marcelo":3571.70,"Chaves Martin":7848.56,"Krafft Diego":450.44,"Rossi Juan Manuel":-1994.20,"Ttc":0},"2025-09":{"Sofia Miguel":76554.96,"Autilio Marcelo":45452.05,"Krafft Ariel":38351.55,"Laje Fernando":26663.40,"Ecommerce":16399.45,"Alvarez Fernando":16765.78,"Chaves Martin":8698.05,"Saroka Hugo":4022.52,"Pacce Sergio":2403.97,"Rossi Juan Manuel":2147.03,"Krafft Diego":1863.89,"Arenales Hernan":1388.62,"Ttc":-23.72,"Chalin Alejandro":-863.50,"Microbell":-2198.88},"2025-10":{"Chalin Alejandro":54973.72,"Krafft Ariel":33583.83,"Krafft Diego":36773.17,"Autilio Marcelo":21369.92,"Chaves Martin":18176.79,"Ecommerce":19076.37,"Sofia Miguel":25982.60,"Alvarez Fernando":11584.33,"Arenales Hernan":12788.43,"Saroka Hugo":5376.63,"Pacce Sergio":3284.36,"Rossi Juan Manuel":10267.16,"Microbell":2106.35,"Laje Fernando":-3803.27,"Ttc":0},"2025-11":{"Ttc":119922.54,"Sofia Miguel":52592.52,"Saroka Hugo":34509.37,"Chaves Martin":18840.98,"Ecommerce":18010.94,"Krafft Diego":21911.23,"Rossi Juan Manuel":11970.39,"Microbell":6939.29,"Pacce Sergio":5191.73,"Alvarez Fernando":8883.16,"Krafft Ariel":2389.51,"Autilio Marcelo":2122.25,"Laje Fernando":2253.91,"Chalin Alejandro":3744.27,"Arenales Hernan":-235.41},"2025-12":{"Sofia Miguel":153085.88,"Krafft Ariel":73228.55,"Ecommerce":73442.52,"Autilio Marcelo":60627.36,"Krafft Diego":48559.80,"Chalin Alejandro":19893.20,"Chaves Martin":16730.31,"Laje Fernando":18395.79,"Saroka Hugo":22966.47,"Pacce Sergio":11583.91,"Rossi Juan Manuel":7772.02,"Microbell":7312.90,"Alvarez Fernando":8020.28,"Arenales Hernan":4390.75,"Ttc":0},"2026-01":{"Ecommerce":121682.62,"Krafft Diego":48508.55,"Krafft Ariel":39141.42,"Saroka Hugo":37690.24,"Autilio Marcelo":32076.11,"Sofia Miguel":26844.03,"Chalin Alejandro":15956.78,"Chaves Martin":14780.63,"Arenales Hernan":8826.10,"Pacce Sergio":7820.51,"Alvarez Fernando":9444.56,"Laje Fernando":3041.72,"Microbell":2805.37,"Rossi Juan Manuel":2026.42,"Ttc":0},"2026-02":{"Laje Fernando":39419.36,"Ecommerce":39110.55,"Gerencia":40974.23,"Ttc":10306.00,"Rossi Juan Manuel":2936.40,"Saroka Hugo":3103.90,"Arenales Hernan":1781.92,"Krafft Ariel":1793.84,"Sofia Miguel":1236.46,"Pacce Sergio":720.53,"Microbell":351.26,"Alvarez Fernando":-2483.92,"Autilio Marcelo":-115.87,"Chaves Martin":-1340.25,"Krafft Diego":0}};
+const DATA_VEND_MONTHLY = {
+"2025-03":{"Alvarez Fernando":23271.92,"Arenales Hernan":9533.89,"Autilio Marcelo":1986.04,"Chalin Alejandro":2435.60,"Chaves Martin":12626.62,"Ecommerce":25007.49,"Krafft Ariel":17342.33,"Krafft Diego":1215.32,"Microbell":3258.87,"Pacce Sergio":80.41,"Rossi Juan Manuel":1459.28,"Saroka Hugo":3769.77,"Sofia Miguel":19929.43,"Soltz Ricardo":4597.62,"Ttc":8071.58},
+"2025-04":{"Alvarez Fernando":29114.43,"Arenales Hernan":24300.87,"Autilio Marcelo":3999.49,"Chalin Alejandro":2338.92,"Chaves Martin":25804.83,"Ecommerce":28536.74,"Krafft Ariel":2226.16,"Krafft Diego":864.77,"Microbell":1099.86,"Pacce Sergio":-304.31,"Rossi Juan Manuel":131.10,"Saroka Hugo":6253.34,"Sofia Miguel":48793.89,"Ttc":59995.94},
+"2025-05":{"Alvarez Fernando":36604.11,"Arenales Hernan":6238.36,"Autilio Marcelo":3500.28,"Chalin Alejandro":9382.02,"Chaves Martin":32898.47,"Ecommerce":13712.95,"Krafft Ariel":47046.18,"Krafft Diego":56.44,"Microbell":59416.52,"Pacce Sergio":978.65,"Rossi Juan Manuel":-444.08,"Saroka Hugo":1817.43,"Sofia Miguel":10363.15,"Soltz Ricardo":15211.93,"Ttc":2249.22},
+"2025-06":{"Alvarez Fernando":42140.00,"Arenales Hernan":4665.36,"Autilio Marcelo":2105.84,"Chalin Alejandro":4066.01,"Chaves Martin":33464.79,"Ecommerce":11710.67,"Krafft Ariel":47853.04,"Krafft Diego":1175.78,"Microbell":29598.20,"Pacce Sergio":2526.13,"Rossi Juan Manuel":115.69,"Saroka Hugo":3974.25,"Sofia Miguel":5437.43,"Soltz Ricardo":6111.62,"Ttc":80595.61},
+"2025-07":{"Alvarez Fernando":24019.82,"Arenales Hernan":3761.88,"Autilio Marcelo":7759.24,"Chalin Alejandro":7663.03,"Chaves Martin":37326.46,"Ecommerce":17216.08,"Krafft Ariel":61941.14,"Microbell":31875.16,"Pacce Sergio":5669.68,"Rossi Juan Manuel":12434.13,"Saroka Hugo":1016.54,"Sofia Miguel":15608.95,"Soltz Ricardo":7480.11,"Ttc":18262.33},
+"2025-08":{"Alvarez Fernando":65929.05,"Arenales Hernan":10907.67,"Autilio Marcelo":3571.70,"Chalin Alejandro":23491.00,"Chaves Martin":7848.56,"Ecommerce":20542.50,"Krafft Ariel":16751.01,"Krafft Diego":450.44,"Microbell":21397.04,"Pacce Sergio":10328.42,"Rossi Juan Manuel":-1994.20,"Saroka Hugo":6011.14,"Sofia Miguel":37935.04},
+"2025-09":{"Alvarez Fernando":16765.78,"Arenales Hernan":1388.62,"Autilio Marcelo":45452.05,"Chalin Alejandro":-863.50,"Chaves Martin":8698.05,"Ecommerce":16399.45,"Krafft Ariel":38351.55,"Krafft Diego":1863.89,"Microbell":24464.52,"Pacce Sergio":2403.97,"Rossi Juan Manuel":2147.03,"Saroka Hugo":4022.52,"Sofia Miguel":76554.96,"Soltz Ricardo":1608.81,"Ttc":-23.72},
+"2025-10":{"Alvarez Fernando":11584.33,"Arenales Hernan":12788.43,"Autilio Marcelo":21369.92,"Chalin Alejandro":54973.72,"Chaves Martin":18176.79,"Ecommerce":19076.37,"Krafft Ariel":33583.83,"Krafft Diego":36773.17,"Microbell":-1696.92,"Pacce Sergio":3284.36,"Rossi Juan Manuel":10267.16,"Saroka Hugo":5376.63,"Sofia Miguel":25982.60,"Soltz Ricardo":4032.46},
+"2025-11":{"Alvarez Fernando":8883.16,"Arenales Hernan":-235.41,"Autilio Marcelo":2122.25,"Chalin Alejandro":3744.27,"Chaves Martin":18840.98,"Ecommerce":18010.94,"Krafft Ariel":2389.51,"Krafft Diego":21911.23,"Microbell":9193.20,"Pacce Sergio":5191.73,"Rossi Juan Manuel":11970.39,"Saroka Hugo":34509.37,"Sofia Miguel":52592.52,"Ttc":119922.54},
+"2025-12":{"Alvarez Fernando":8020.28,"Arenales Hernan":4390.75,"Autilio Marcelo":60627.36,"Chalin Alejandro":19893.20,"Chaves Martin":16730.31,"Ecommerce":73442.52,"Krafft Ariel":73228.55,"Krafft Diego":48559.80,"Microbell":25708.69,"Pacce Sergio":11583.91,"Rossi Juan Manuel":7772.02,"Saroka Hugo":22966.47,"Sofia Miguel":153085.88,"Soltz Ricardo":5475.74},
+"2026-01":{"Alvarez Fernando":9444.56,"Arenales Hernan":8826.10,"Autilio Marcelo":32076.11,"Chalin Alejandro":15956.78,"Chaves Martin":14780.63,"Ecommerce":121682.62,"Krafft Ariel":39141.42,"Krafft Diego":48508.55,"Microbell":5847.09,"Pacce Sergio":7820.51,"Rossi Juan Manuel":2026.42,"Saroka Hugo":37690.24,"Sofia Miguel":26844.03,"Soltz Ricardo":522.73,"Ttc":0},
+"2026-02":{"Alvarez Fernando":-2483.92,"Arenales Hernan":1781.92,"Autilio Marcelo":-115.87,"Chaves Martin":-1340.25,"Ecommerce":39110.55,"Krafft Ariel":1793.84,"Microbell":39770.62,"Pacce Sergio":720.53,"Rossi Juan Manuel":2936.40,"Saroka Hugo":3103.90,"Sofia Miguel":1236.46,"Ttc":10306.00}
+};
 
-const DATA_ART_MONTHLY = {"2025-03":{"Antena Direct Tv Prepaga Art.Dtv046":6947.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":2518.09,"Castillo Inflable C/Motor 9004B":2158.55,"Colchon Inflable 2 Plazas Art.11203":1905.07,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1371.73},"2025-04":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":63466.72,"Colchon Inflable 2 Plazas Art.11203":15290.40,"Cama Elastica 305Cm Art. Mtdp-289-10N":180.15,"Antena Direct Tv Prepaga Art.Dtv046":2776.20,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1236.18},"2025-05":{"Colchon (Generico) - Colchon 80X190/17 Espuma Placa Entera Funda Tnt":58787.12,"Castillo Inflable C/Motor 9004B":18544.66,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":14240.77,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":2832.59,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":2808.28},"2025-06":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":40844.33,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":22429.21,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":20351.78,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":17364.50,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10920.05},"2025-07":{"Cama Elastica 305Cm Art. Mtdp-289-10N":3753.36,"Motorola Pulse Escape Xt220 Negro":7267.44,"Castillo Inflable C/Motor 9004B":6607.89,"Antena Direct Tv Prepaga Art.Dtv046":5863.23,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":4913.18},"2025-08":{"Alvarez Fernando-Camas":65929.05,"Motorola Pulse Escape Xt220 Negro":15962.65,"Cama Elastica 305Cm Art. Mtdp-289-10N":6964.06,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":5461.43,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":7468.52},"2025-09":{"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10142.11,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":9430.16,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":9336.83,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13848.24,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":7086.71},"2025-10":{"Cama Elastica 305Cm Art. Mtdp-289-10N":14083.11,"Motorola Pulse Escape Xt220 Negro":5061.21,"Antena Direct Tv Prepaga Art.Dtv046":1653.76,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3052.16,"Carpa Nawata 4 - Art.9004 - Blanco":7838.20},"2025-11":{"Saroka":34509.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":7847.39,"Motorola Pulse Escape Xt220 Negro":3257.24,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":4031.31,"Antena Direct Tv Prepaga Art.Dtv046":2283.22},"2025-12":{"Carpa Nawata 4 - Art.9004 - Blanco":35937.35,"Carpa Beach Sun - Art.9010 Blue":21505.26,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":12549.44,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13622.36,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":10876.78},"2026-01":{"Colchon Inflable 2 Plazas Art.11203":16606.89,"Carpa Beach Sun - Art.9010 Blue":5755.87,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":5886.01,"Antena Direct Tv Prepaga Art.Dtv046":2929.48,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3405.69},"2026-02":{"Laje Fernando-Gestiones":39419.36,"Antena Direct Tv Prepaga Art.Dtv046":3731.86,"Carpa Beach Sun - Art.9010 Blue":5839.84,"Carpa Nawata 4 - Art.9004 - Blanco":945.80,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":1539.20}};
+const DATA_ART_MONTHLY = {"2025-03":{"Antena Direct Tv Prepaga Art.Dtv046":6947.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":2518.09,"Castillo Inflable C/Motor 9004B":2158.55,"Colchon Inflable 2 Plazas Art.11203":1905.07,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1371.73},"2025-04":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":63466.72,"Colchon Inflable 2 Plazas Art.11203":15290.40,"Cama Elastica 305Cm Art. Mtdp-289-10N":180.15,"Antena Direct Tv Prepaga Art.Dtv046":2776.20,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1236.18},"2025-05":{"Colchon (Generico) - Colchon 80X190/17 Espuma Placa Entera Funda Tnt":58787.12,"Castillo Inflable C/Motor 9004B":18544.66,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":14240.77,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":2832.59,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":2808.28},"2025-06":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":40844.33,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":22429.21,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":20351.78,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":17364.50,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10920.05},"2025-07":{"Cama Elastica 305Cm Art. Mtdp-289-10N":3753.36,"Motorola Pulse Escape Xt220 Negro":7267.44,"Castillo Inflable C/Motor 9004B":6607.89,"Antena Direct Tv Prepaga Art.Dtv046":5863.23,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":4913.18},"2025-08":{"Alvarez Fernando-Camas":65929.05,"Motorola Pulse Escape Xt220 Negro":15962.65,"Cama Elastica 305Cm Art. Mtdp-289-10N":6964.06,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":5461.43,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":7468.52},"2025-09":{"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10142.11,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":9430.16,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":9336.83,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13848.24,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":7086.71},"2025-10":{"Cama Elastica 305Cm Art. Mtdp-289-10N":14083.11,"Motorola Pulse Escape Xt220 Negro":5061.21,"Antena Direct Tv Prepaga Art.Dtv046":1653.76,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3052.16,"Carpa Nawata 4 - Art.9004 - Blanco":7838.20},"2025-11":{"Saroka":34509.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":7847.39,"Motorola Pulse Escape Xt220 Negro":3257.24,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":4031.31,"Antena Direct Tv Prepaga Art.Dtv046":2283.22},"2025-12":{"Carpa Nawata 4 - Art.9004 - Blanco":35937.35,"Carpa Beach Sun - Art.9010 Blue":21505.26,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":12549.44,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13622.36,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":10876.78},"2026-01":{"Colchon Inflable 2 Plazas Art.11203":16606.89,"Carpa Beach Sun - Art.9010 Blue":5755.87,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":5886.01,"Antena Direct Tv Prepaga Art.Dtv046":2929.48,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3405.69},"2026-02":{"Microbell-Gestiones":39419.36,"Antena Direct Tv Prepaga Art.Dtv046":3731.86,"Carpa Beach Sun - Art.9010 Blue":5839.84,"Carpa Nawata 4 - Art.9004 - Blanco":945.80,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":1539.20}};
 
 // Top 15 artículos acumulado total
 const TOP15_ART = [
-  {art:"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco",venta:151123.81,stock:797},
-  {art:"Castillo Inflable C/Motor 9004B",venta:61437.43,stock:310},
-  {art:"Colchon (Generico) - Colchon 80X190/17 Espuma Placa Entera Funda Tnt",venta:58787.12,stock:420},
-  {art:"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea",venta:49656.90,stock:58},
-  {art:"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro",venta:47685.80,stock:135},
-  {art:"Carpa Nawata 4 - Art.9004 - Blanco",venta:47048.11,stock:101},
-  {art:"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho",venta:43140.25,stock:91},
-  {art:"Cama Elastica 305Cm Art. Mtdp-289-10N",venta:40791.19,stock:93},
-  {art:"Motorola Pulse Escape Xt220 Negro",venta:40393.38,stock:12},
-  {art:"Carpa Beach Sun - Art.9010 Blue",venta:39558.35,stock:240},
-  {art:"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro",venta:39484.76,stock:3502},
-  {art:"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco",venta:37272.46,stock:71},
-  {art:"Antena Direct Tv Prepaga Art.Dtv046",venta:37072.41,stock:792},
-  {art:"Colchon Inflable 2 Plazas Art.11203",venta:36863.79,stock:47},
-  {art:"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park",venta:36721.78,stock:81}
+  {art:"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco",            venta:151124, costo:85781,  mb:43.2, stock:797},
+  {art:"Castillo Inflable C/Motor 9004B",                             venta:61437,  costo:21822,  mb:64.5, stock:310},
+  {art:"Colchon (Gen.) - 80X190/17 Espuma Placa Entera Funda Tnt",   venta:58787,  costo:0,      mb:100.0,stock:420},
+  {art:"Microelectronics-Cubos Magneticos T036 192Pcs Corazon Aldea", venta:49657,  costo:29497,  mb:40.6, stock:58},
+  {art:"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro",             venta:47686,  costo:24931,  mb:47.7, stock:135},
+  {art:"Carpa Nawata 4 - Art.9004 - Blanco",                         venta:47048,  costo:26924,  mb:42.8, stock:101},
+  {art:"Microelectronics-Cubos Magneticos T084-100Pcs El Rancho",     venta:43140,  costo:15746,  mb:63.5, stock:91},
+  {art:"Cama Elastica 305Cm Art. Mtdp-289-10N",                      venta:40791,  costo:21985,  mb:46.1, stock:93},
+  {art:"Motorola Pulse Escape Xt220 Negro",                           venta:40393,  costo:21583,  mb:46.6, stock:12},
+  {art:"Carpa Beach Sun - Art.9010 Blue",                             venta:39558,  costo:15347,  mb:61.2, stock:240},
+  {art:"Motorola Motobuds 065 Tws Auriculares Bluetooth In Ear Negro",venta:39485,  costo:23786,  mb:39.8, stock:3502},
+  {art:"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco",            venta:37272,  costo:20184,  mb:45.8, stock:71},
+  {art:"Antena Direct Tv Prepaga Art.Dtv046",                         venta:37072,  costo:18434,  mb:50.3, stock:792},
+  {art:"Colchon Inflable 2 Plazas Art.11203",                         venta:36864,  costo:22677,  mb:38.5, stock:47},
+  {art:"Microelectronics-Cubos Magneticos Z018 100Pcs Mini Park",     venta:36722,  costo:21103,  mb:42.5, stock:81}
 ];
 
 const TOP15_VEND_TOTAL = [
-  {v:"Sofia Miguel",t:474364.33},{v:"Ecommerce",t:404448.89},{v:"Krafft Ariel",t:381648.55},{v:"Ttc",t:299379.51},{v:"Alvarez Fernando",t:273293.54},{v:"Chaves Martin",t:225856.23},{v:"Autilio Marcelo",t:184454.42},{v:"Krafft Diego",t:161379.40},{v:"Laje Fernando",t:155650.41},{v:"Chalin Alejandro",t:143081.06},{v:"Saroka Hugo",t:130511.60},{v:"Microbell",t:94282.45},{v:"Arenales Hernan",t:88348.45},{v:"Pacce Sergio",t:50283.99},{v:"Rossi Juan Manuel",t:48821.34}
+  {v:"Sofia Miguel",     t:474364.33},
+  {v:"Ecommerce",        t:404448.89},
+  {v:"Krafft Ariel",     t:381648.55},
+  {v:"Ttc",              t:299379.51},
+  {v:"Alvarez Fernando", t:273293.54},
+  {v:"Microbell",        t:249932.85},
+  {v:"Chaves Martin",    t:225856.23},
+  {v:"Autilio Marcelo",  t:184454.42},
+  {v:"Krafft Diego",     t:161379.40},
+  {v:"Chalin Alejandro", t:143081.06},
+  {v:"Saroka Hugo",      t:130511.60},
+  {v:"Arenales Hernan",  t:88348.45},
+  {v:"Pacce Sergio",     t:50284.00},
+  {v:"Rossi Juan Manuel",t:48821.34},
+  {v:"Soltz Ricardo",    t:43692.85}
 ];
 
 const DATA_MOV = {"2025-03":{Venta:21847.51,Gastos:17653.57},"2025-04":{Venta:24522.15,Gastos:17716.91},"2025-05":{Venta:19759.29,Gastos:14934.93},"2025-06":{Venta:19812.26,Gastos:16243.93},"2025-07":{Venta:18269.55,Gastos:14945.43},"2025-08":{Venta:18790.50,Gastos:13752.24},"2025-09":{Venta:19517.74,Gastos:10716.74},"2025-10":{Venta:20025.67,Gastos:14503.75},"2025-11":{Venta:19659.55,Gastos:15854.65},"2025-12":{Venta:19370.10,Gastos:22219.78},"2026-01":{Venta:22316.11,Gastos:20911.21},"2026-02":{Venta:20627.77,Gastos:15334.09}};
@@ -620,13 +647,75 @@ function updateVentas() {
     {label:'Utilidad Neta', data:utilid, color:'#2ecc71'}
   ],'line');
 
-  // Top vendedores - filtrado por período
+  // Top 15 vendedores — filtrado por período, escala automática, nombres en eje Y
   const vendData = {};
-  selectedMonths.forEach(m=>{ if(DATA_VEND_MONTHLY[m]) Object.entries(DATA_VEND_MONTHLY[m]).forEach(([k,v])=>{ vendData[k]=(vendData[k]||0)+v; }); });
-  const top15v = Object.entries(vendData).sort((a,b)=>b[1]-a[1]).slice(0,15);
-  const vLabels=top15v.map(x=>x[0]);
-  const vVals=top15v.map(x=>x[1]);
-  updateChart('chartVendedores','bar',vLabels,vVals,vVals.map((v,i)=>i===0?'#f7c84f':i===1?'#c0c0c0':i===2?'#cd7f32':'#4f8ef7'),true,'horizontal');
+  selectedMonths.forEach(m=>{
+    if(DATA_VEND_MONTHLY[m]) Object.entries(DATA_VEND_MONTHLY[m]).forEach(([k,v])=>{ vendData[k]=(vendData[k]||0)+v; });
+  });
+  // Chart.js barra horizontal: el ULTIMO elemento del array aparece ARRIBA.
+  // Para tener Sofia Miguel (#1 mayor) arriba y Soltz Ricardo (#15 menor) abajo,
+  // el array debe ir de menor a mayor: [Soltz, ..., Ecommerce, Sofia]
+  const top15v  = Object.entries(vendData).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  // top15v[0] = Sofia (mayor), top15v[14] = Soltz (menor)
+  // Invertimos para chart: vLabels[0]=Soltz (abajo), vLabels[14]=Sofia (arriba)
+  const vLabels = top15v.map(x=>x[0]).reverse();
+  const vVals   = top15v.map(x=>x[1]).reverse();
+  // rank 0 = Sofia (posición 14 en array = arriba), rank 14 = Soltz (posición 0 = abajo)
+  const vColors = vVals.map((_,i)=>{
+    const rank = vVals.length - 1 - i; // 0=mayor(arriba), 14=menor(abajo)
+    return rank===0?'#f7c84f':rank===1?'#c0c0c0':rank===2?'#cd7f32':'#4f8ef7';
+  });
+  destroyChart('chartVendedores');
+  const ctxV = document.getElementById('chartVendedores').getContext('2d');
+  charts['chartVendedores'] = new Chart(ctxV, {
+    type: 'bar',
+    data: {
+      labels: vLabels,
+      datasets:[{
+        label: 'Venta U$S',
+        data: vVals,
+        backgroundColor: vColors,
+        borderColor: 'rgba(255,255,255,.06)',
+        borderWidth: 0,
+        borderRadius: 4
+      }]
+    },
+    options:{
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins:{
+        legend:{ display:false },
+        tooltip:{
+          callbacks:{
+            label: c=>' Venta: '+fmt(c.raw),
+            title: t=>t[0].label
+          },
+          backgroundColor:'rgba(20,23,35,.97)',
+          titleColor:'#ffffff',
+          bodyColor:'#ffffff',
+          borderColor:'rgba(247,200,79,.4)',
+          borderWidth:1,
+          padding:10
+        }
+      },
+      scales:{
+        x:{
+          ticks:{ color:'#ffffff', font:{size:10}, callback: v=>fmtK(v) },
+          grid:{ color:'rgba(255,255,255,.06)' },
+          title:{ display:true, text:'Venta U$S', color:'#ffffff', font:{size:11} }
+        },
+        y:{
+          ticks:{
+            color:'#ffffff',
+            font:{ size:11, weight:'500' },
+            autoSkip: false
+          },
+          grid:{ display:false }
+        }
+      }
+    }
+  });
 
   // Tabla artículos - con stock
   const tbody = document.querySelector('#tableArticulos tbody');
@@ -635,14 +724,18 @@ function updateVentas() {
   selectedMonths.forEach(m=>{ if(DATA_ART_MONTHLY[m]) Object.entries(DATA_ART_MONTHLY[m]).forEach(([k,v])=>{ artData[k]=(artData[k]||0)+v; }); });
   const art15 = TOP15_ART.slice(0,15);
   art15.forEach((a,i)=>{
-    const s=a.stock;
-    const sc = s>200?'stock-high':s>50?'stock-med':'stock-low';
+    const s   = a.stock;
+    const mb  = a.mb;
+    const sc  = s>200?'stock-high':s>50?'stock-med':'stock-low';
+    const mbc = mb>=55?'badge-green':mb>=40?'badge-yellow':'badge-red';
     tbody.innerHTML+=`<tr>
-      <td><span class="rank">#${i+1}</span></td>
-      <td>${a.art}</td>
+      <td style="text-align:center;color:var(--muted);font-size:11px;font-weight:700">#${i+1}</td>
+      <td style="text-align:left;font-weight:500">${a.art}</td>
       <td>${fmt(a.venta)}</td>
-      <td>${s.toLocaleString('es-AR')}</td>
-      <td><span class="stock-badge ${sc}">${s>200?'✅ Alto':s>50?'⚠️ Medio':'🔴 Bajo'}</span></td>
+      <td style="color:var(--muted)">${fmt(a.costo)}</td>
+      <td><span class="kpi-badge ${mbc}">${mb.toFixed(1)}%</span></td>
+      <td style="font-weight:600">${s.toLocaleString('es-AR')}</td>
+      <td><span class="stock-badge ${sc}">${s>200?'✅ Alto':s>50?'⚠️ Med':'🔴 Bajo'}</span></td>
     </tr>`;
   });
 }
