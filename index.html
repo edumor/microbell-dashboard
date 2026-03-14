@@ -213,7 +213,7 @@
   </div>
   <div class="header-right">
     <div class="period-badge">Mar 2025 → Feb 2026</div>
-    <div class="last-update">📅 Stock al 13/03/2026</div>
+    <div class="last-update">💵 Valores en U$S &nbsp;|&nbsp; 📅 Stock al 13/03/2026</div>
   </div>
 </div>
 
@@ -319,6 +319,13 @@
       <div class="chart-sub">Participación % por Grupo de Ventas</div>
       <div class="chart-wrap" style="height:320px"><canvas id="chartDonutCanal"></canvas></div>
     </div>
+  </div>
+
+  <!-- Tabla Gastos por Grupo y Descripcion -->
+  <div class="chart-card chart-full">
+    <div class="chart-title">💸 Gastos Operativos — Detalle por Grupo y Descripción</div>
+    <div class="chart-sub">Gasto U$S por grupo · expandible · período seleccionado</div>
+    <div id="tablaGastosDetalle" style="margin-top:8px"></div>
   </div>
 </div>
 
@@ -428,19 +435,20 @@ function doLogin() {
 const MONTHS = ['2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
 const MONTH_LABELS = ['Mar-25','Abr-25','May-25','Jun-25','Jul-25','Ago-25','Sep-25','Oct-25','Nov-25','Dic-25','Ene-26','Feb-26'];
 
+// Fuente exclusiva: Hoja Datos — sin Costos Movistar
 const DATA_MONTHLY = {
-  "2025-03":{Venta:146317.88, Costo:55195.89,  Reposicion:80421.27,  Gastos:129892.85},
-  "2025-04":{Venta:249685.92, Costo:103294.67, Reposicion:135460.13, Gastos:158390.11},
-  "2025-05":{Venta:245366.20, Costo:33328.04,  Reposicion:99119.44,  Gastos:133795.22},
-  "2025-06":{Venta:284549.10, Costo:146795.32, Reposicion:161727.29, Gastos:178968.48},
-  "2025-07":{Venta:272583.47, Costo:139085.56, Reposicion:158019.62, Gastos:156727.51},
-  "2025-08":{Venta:247614.88, Costo:135675.50, Reposicion:139620.21, Gastos:134586.29},
-  "2025-09":{Venta:247349.77, Costo:147250.84, Reposicion:143129.83, Gastos:207655.97},
-  "2025-10":{Venta:260750.90, Costo:138112.62, Reposicion:145057.06, Gastos:125127.74},
-  "2025-11":{Venta:322031.78, Costo:147223.27, Reposicion:172725.13, Gastos:128444.81},
-  "2025-12":{Venta:544522.03, Costo:248068.82, Reposicion:265475.71, Gastos:182232.43},
-  "2026-01":{Venta:385509.01, Costo:161042.93, Reposicion:162375.54, Gastos:211979.31},
-  "2026-02":{Venta:102115.05, Costo:42720.69,  Reposicion:43989.83,  Gastos:111102.80}
+  "2025-03":{Venta:146317.88, Costo:55195.89,  Reposicion:80421.27,  Gastos:112239.28},
+  "2025-04":{Venta:249685.92, Costo:103294.67, Reposicion:135460.13, Gastos:140673.20},
+  "2025-05":{Venta:245366.20, Costo:33328.04,  Reposicion:99119.44,  Gastos:118860.29},
+  "2025-06":{Venta:284549.10, Costo:146795.32, Reposicion:161727.29, Gastos:162724.55},
+  "2025-07":{Venta:272583.47, Costo:139085.56, Reposicion:158019.62, Gastos:141782.07},
+  "2025-08":{Venta:247614.88, Costo:135675.50, Reposicion:139620.21, Gastos:120834.05},
+  "2025-09":{Venta:247349.77, Costo:147250.84, Reposicion:143129.83, Gastos:196939.23},
+  "2025-10":{Venta:260750.90, Costo:138112.62, Reposicion:145057.06, Gastos:110623.99},
+  "2025-11":{Venta:322031.78, Costo:147223.27, Reposicion:172725.13, Gastos:112590.16},
+  "2025-12":{Venta:544522.03, Costo:248068.82, Reposicion:265475.71, Gastos:160012.65},
+  "2026-01":{Venta:385509.01, Costo:161042.93, Reposicion:162375.54, Gastos:191068.10},
+  "2026-02":{Venta:102115.05, Costo:42720.69,  Reposicion:43989.83,  Gastos:95768.71}
 };
 
 const DATA_SR_MONTHLY = {"2025-03":{"Outdoors":61540.20,"Jugueteria":35837.84,"Tecnologia":38856.62,"Sports":8978.64,"Hogar":1104.58},"2025-04":{"Outdoors":155845.56,"Jugueteria":39814.13,"Tecnologia":50016.86,"Sports":1557.99,"Hogar":2451.38},"2025-05":{"Outdoors":63919.51,"Jugueteria":101113.59,"Tecnologia":16891.16,"Sports":4378.72,"Hogar":59063.21},"2025-06":{"Outdoors":130838.10,"Jugueteria":113670.55,"Tecnologia":36088.07,"Sports":3381.59,"Hogar":570.80},"2025-07":{"Outdoors":61732.07,"Jugueteria":168123.28,"Tecnologia":39480.79,"Sports":2612.87,"Hogar":634.47},"2025-08":{"Outdoors":78049.18,"Jugueteria":131263.64,"Tecnologia":35493.91,"Sports":2101.65,"Hogar":706.51},"2025-09":{"Outdoors":167711.78,"Jugueteria":60356.30,"Tecnologia":18967.99,"Sports":-507.19,"Hogar":820.88},"2025-10":{"Outdoors":198809.99,"Jugueteria":35982.74,"Tecnologia":22577.91,"Sports":2610.44,"Hogar":769.82},"2025-11":{"Outdoors":236585.29,"Jugueteria":61867.78,"Tecnologia":19068.07,"Sports":3739.86,"Hogar":770.78},"2025-12":{"Outdoors":440175.70,"Jugueteria":83134.54,"Tecnologia":15197.86,"Sports":5880.16,"Hogar":133.76},"2026-01":{"Outdoors":339771.79,"Jugueteria":31826.37,"Tecnologia":10786.62,"Sports":2473.82,"Hogar":650.41},"2026-02":{"Outdoors":74353.14,"Jugueteria":17269.12,"Tecnologia":9208.72,"Sports":444.12,"Hogar":839.96}};
@@ -507,6 +515,1486 @@ const MOV_TIPO_LABELS = ["Sueldos Y Jornales","Comisiones Tráfico","Cargas Soci
 
 const FEB26_GASTOS = {"Servicio Almacenamiento Y Embalaje":22614.84,"Sueldos Y Jornales - Microbell":18644.36,"Comisiones Mercado Libre":10987.74,"Alquiler Deposito Pacheco":6627.49,"Comisiones Vendedores Indirectas":6480.12,"Cargo Mercado Envios":4643.20,"Alquiler Oficinas Monroe":4044.39,"Sueldos Ecommerce":2898.61,"Cargas Sociales":2771.42,"Honorarios Administrativos":1959.61,"Gastos Comercializ.":1348.82,"Publicidad Y Propaganda":1164.02,"Cargo Plataforma Mercado Pago":1097.41,"Fletes Y Acarreos":1092.20,"Impuesto Débito Ley 25413":946.09,"Comisiones Bancarias":839.39,"Impuesto Crédito Ley 25413":831.85,"Electricidad - Luz":787.85,"Honorarios Contables":778.53,"Otros Gastos (varios)":2045.04};
 
+// ===== GASTOS DETALLE POR MES > GRUPO > DESCRIPCION =====
+const DATA_GASTOS_DETALLE = {
+"2025-03": {
+"Gastos Comercializacion Retails": {
+"total": 801.1,
+"items": {
+"Comisiones Comercializacion Hipermercados": 801.1
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 1807.37,
+"items": {
+"Cargo Por Mercado Envios": 1807.37
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 262.66,
+"items": {
+"Comisiones Marketplace": 262.66
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 15000.58,
+"items": {
+"Cargas Sociales Ecommerce": 619.79,
+"Cargo Plataforma Mercado Pago": 248.99,
+"Cargo Por Comisiones Mercado Libre": 10916.93,
+"Sueldos Y Jornales - Ecommerce": 3214.87
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 3.05,
+"items": {
+"Gastos Ecommerce - Youknow": 3.05
+}
+},
+"Gastos Financieros": {
+"total": 2552.96,
+"items": {
+"Comisiones Y Gastos Bancarios": 585.87,
+"Diferencia De Cotizacion Negativa": 99.91,
+"Impuesto Al Credito - Ley 25413": 1186.61,
+"Impuesto Al Debito - Ley 25413": 680.57
+}
+},
+"Gastos de Administracion": {
+"total": 25633.92,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 52.51,
+"Alquiler Deposito Pacheco": 5566.25,
+"Alquiler Fotocopiadora": 191.27,
+"Alquiler Oficinas Monroe 5088": 4009.24,
+"Encomiendas Y Correos": 362.98,
+"Expensas Deposito Pacheco": 763.31,
+"Expensas Monroe 5088": 687.86,
+"Gastos Grales De Administracion": 17.91,
+"Gastos Limpieza": 1327.84,
+"Gastos Medicos Del Personal": 7.58,
+"Guarderia Cascos": 138.85,
+"Honorarios Abogados": 2772.64,
+"Honorarios Contables": 1320.75,
+"Honorarios Por Sistemas": 671.22,
+"Internet Y Dominio Web": 69.66,
+"Libreria Y Papeleria": 314.6,
+"Seguro Rodados": 1059.08,
+"Servicios De 3Ros": 5868.39,
+"Software Y Gastos Computacion": 431.98
+}
+},
+"Gastos de Comercializacion": {
+"total": 25509.31,
+"items": {
+"Combustible-Adm": 723.13,
+"Comisiones - Vendedores Directas": 485.74,
+"Comisiones Vendedores - Indirectas": 9040.87,
+"Fletes Y Acarreos Logistica": 9.37,
+"Gastos Grales. Comercializ.": 462.86,
+"Gastos Stand Y Expo": 2106.43,
+"Mant. De Maquinarias Y Rodados": 907.26,
+"Peajes Y Estacionamiento": 223.07,
+"Publicidad Y Propaganda": 1365.48,
+"Servicio Almacenamiento Y Embalaje De Terceros": 10185.1
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 22785.68,
+"items": {
+"Cargas Sociales": 3464.81,
+"Honorarios Administrativos": 834.75,
+"Retiro F. Laje Para Sueldos": 480.59,
+"Sueldos Y Jornales - Microbell": 18005.53
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1538.46,
+"items": {
+"Electricidad - Luz": 1167.95,
+"Telefonos Celulares Y Radios": 42.23,
+"Telefonos Fijos - Ip - Internet": 328.28
+}
+},
+"Gastos en Sucursales": {
+"total": 2084.52,
+"items": {
+"Cargas Sociales - Youknow": 274.11,
+"Encomiendas Y Correos - Youknow": 259.0,
+"Gastos Youknow": 42.67,
+"Sueldos Y Jornales Youknow": 1508.74
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 13882.04,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 13863.22,
+"Plan Facilidades Agip": 18.82
+}
+},
+"Otros Gastos": {
+"total": 377.6,
+"items": {
+"Gastos Personal Fernando Laje": 260.42,
+"Otros Gastos Varios": 117.18
+}
+}
+},
+"2025-04": {
+"Gastos Comercializacion Retails": {
+"total": 9543.71,
+"items": {
+"Comisiones Comercializacion Hipermercados": 5529.71,
+"Gastos Comercializacion Hipermercados": 4014.0
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 2288.79,
+"items": {
+"Cargo Por Mercado Envios": 2288.79
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 80.11,
+"items": {
+"Comisiones Marketplace": 80.11
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 18043.98,
+"items": {
+"Cargas Sociales Ecommerce": 648.47,
+"Cargo Plataforma Mercado Pago": 358.34,
+"Cargo Por Comisiones Mercado Libre": 13687.27,
+"Sueldos Y Jornales - Ecommerce": 3349.9
+}
+},
+"Gastos Financieros": {
+"total": 3747.94,
+"items": {
+"Comisiones Y Gastos Bancarios": 624.48,
+"Impuesto Al Credito - Ley 25413": 2143.36,
+"Impuesto Al Debito - Ley 25413": 980.1
+}
+},
+"Gastos de Administracion": {
+"total": 22692.84,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 64.06,
+"Alquiler Deposito Pacheco": 7393.72,
+"Alquiler Fotocopiadora": 194.34,
+"Alquiler Oficinas Monroe 5088": 4046.21,
+"Encomiendas Y Correos": 235.13,
+"Expensas Deposito Pacheco": 750.09,
+"Expensas Monroe 5088": 762.41,
+"Ferreteria Manten. De Edificio Pintura": 4.57,
+"Gastos Grales De Administracion": 50.09,
+"Gastos Judiciales": 273.97,
+"Guarderia Cascos": 138.85,
+"Honorarios Contables": 848.96,
+"Honorarios Por Sistemas": 663.35,
+"Imprenta Y Grafica": 228.08,
+"Internet Y Dominio Web": 69.95,
+"Libreria Y Papeleria": 93.12,
+"Seguro Rodados": 1046.51,
+"Seguros": -149.47,
+"Sellados Y Certificaciones": 23.75,
+"Servicios De 3Ros": 5507.37,
+"Software Y Gastos Computacion": 447.78
+}
+},
+"Gastos de Comercializacion": {
+"total": 55559.12,
+"items": {
+"Combustible-Adm": 536.61,
+"Comisiones - Vendedores Directas": 1112.23,
+"Comisiones Vendedores - Indirectas": 14607.99,
+"Fletes Y Acarreos Logistica": 3662.1,
+"Gastos Grales. Comercializ.": 949.98,
+"Gastos Stand Y Expo": 23210.29,
+"Mant. De Maquinarias Y Rodados": 38.77,
+"Peajes Y Estacionamiento": 512.55,
+"Publicidad Y Propaganda": 1353.23,
+"Servicio Almacenamiento Y Embalaje De Terceros": 9575.37
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 22736.54,
+"items": {
+"Cargas Sociales": 2786.8,
+"Gastos Rubrica Digital - Libro Sueldos": 36.91,
+"Honorarios Administrativos": 836.62,
+"Retiro F. Laje Para Sueldos": 146.12,
+"Sueldos Y Jornales - Microbell": 18930.09
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1353.65,
+"items": {
+"Electricidad - Luz": 987.44,
+"Telefonos Celulares Y Radios": 42.87,
+"Telefonos Fijos - Ip - Internet": 323.34
+}
+},
+"Gastos en Sucursales": {
+"total": 3371.36,
+"items": {
+"Alquileres Youknow": 388.17,
+"Cargas Sociales - Youknow": 286.69,
+"Encomiendas Y Correos - Youknow": 304.72,
+"Gastos Youknow": 37.93,
+"Publicidad Y Propaganda Youknow": 781.42,
+"Sueldos Y Jornales Youknow": 1572.43
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 18.6,
+"items": {
+"Plan Facilidades Agip": 18.6
+}
+},
+"Otros Gastos": {
+"total": 1236.6,
+"items": {
+"Gastos Personal Fernando Laje": 1236.6
+}
+}
+},
+"2025-05": {
+"Gastos Comercializacion Retails": {
+"total": 223.24,
+"items": {
+"Comisiones Comercializacion Hipermercados": 223.24
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 1011.64,
+"items": {
+"Cargo Por Mercado Envios": 1011.64
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 103.47,
+"items": {
+"Comisiones Marketplace": 103.47
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 15425.95,
+"items": {
+"Cargas Sociales Ecommerce": 683.5,
+"Cargo Plataforma Mercado Pago": 273.51,
+"Cargo Por Comisiones Mercado Libre": 11045.43,
+"Sueldos Y Jornales - Ecommerce": 3423.51
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 6.04,
+"items": {
+"Gastos Ecommerce - Youknow": 6.04
+}
+},
+"Gastos Financieros": {
+"total": 13683.17,
+"items": {
+"Comisiones Y Gastos Bancarios": 421.33,
+"Diferencia De Cotizacion Negativa": 9597.23,
+"Impuesto Al Credito - Ley 25413": 1388.74,
+"Impuesto Al Debito - Ley 25413": 2275.87
+}
+},
+"Gastos de Administracion": {
+"total": 28820.15,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 265.44,
+"Alquiler Deposito Pacheco": 7305.94,
+"Alquiler Fotocopiadora": 201.28,
+"Alquiler Oficinas Monroe 5088": 4347.03,
+"Encomiendas Y Correos": 311.82,
+"Expensas Deposito Pacheco": 879.84,
+"Expensas Monroe 5088": 782.6,
+"Ferreteria Manten. De Edificio Pintura": 1.83,
+"Gastos Grales De Administracion": 38.24,
+"Gastos Limpieza": 1440.99,
+"Gastos Medicos Del Personal": 377.37,
+"Guarderia Cascos": 148.42,
+"Honorarios Contables": 888.37,
+"Honorarios Por Sistemas": 700.57,
+"Imprenta Y Grafica": 1108.36,
+"Internet Y Dominio Web": 69.12,
+"Libreria Y Papeleria": 194.23,
+"Seguro Rodados": 1046.51,
+"Servicios De 3Ros": 8251.88,
+"Software Y Gastos Computacion": 460.31
+}
+},
+"Gastos de Comercializacion": {
+"total": 31215.39,
+"items": {
+"Combustible-Adm": 658.69,
+"Comisiones - Vendedores Directas": 1504.23,
+"Comisiones Vendedores - Indirectas": 10752.73,
+"Fletes Y Acarreos Logistica": 1890.41,
+"Gastos De Representacion": 211.33,
+"Gastos Grales. Comercializ.": 1363.42,
+"Gastos Stand Y Expo": 2010.87,
+"Mant. De Maquinarias Y Rodados": 53.41,
+"Mercaderia Obsequio": 183.01,
+"Peajes Y Estacionamiento": 240.56,
+"Publicidad Y Propaganda": 1337.17,
+"Servicio Almacenamiento Y Embalaje De Terceros": 11009.56
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 24190.11,
+"items": {
+"Cargas Sociales": 3498.5,
+"Honorarios Administrativos": 883.93,
+"Retiro F. Laje Para Sueldos": 495.85,
+"Sueldos Y Jornales - Microbell": 19311.83
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1036.47,
+"items": {
+"Electricidad - Luz": 669.03,
+"Telefonos Celulares Y Radios": 43.9,
+"Telefonos Fijos - Ip - Internet": 323.54
+}
+},
+"Gastos en Sucursales": {
+"total": 2684.09,
+"items": {
+"Alquileres Youknow": 191.78,
+"Cargas Sociales - Youknow": 298.29,
+"Encomiendas Y Correos - Youknow": 359.56,
+"Gastos Youknow": 99.63,
+"Servicio De Terminales Pway": 127.85,
+"Sueldos Y Jornales Youknow": 1606.98
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 319.4,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 300.8,
+"Plan Facilidades Agip": 18.6
+}
+},
+"Otros Gastos": {
+"total": 141.19,
+"items": {
+"Gastos Personal Fernando Laje": 141.19
+}
+}
+},
+"2025-06": {
+"Gastos Comercializacion Retails": {
+"total": 7510.78,
+"items": {
+"Comisiones Comercializacion Hipermercados": 7510.78
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 1381.33,
+"items": {
+"Cargo Por Mercado Envios": 1381.33
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 147.37,
+"items": {
+"Comisiones Marketplace": 147.37
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 13894.2,
+"items": {
+"Cargas Sociales Ecommerce": 1083.62,
+"Cargo Plataforma Mercado Pago": 257.95,
+"Cargo Por Comisiones Mercado Libre": 8005.56,
+"Sueldos Y Jornales - Ecommerce": 4547.07
+}
+},
+"Gastos Financieros": {
+"total": 16686.77,
+"items": {
+"Comisiones Y Gastos Bancarios": 13229.39,
+"Impuesto Al Credito - Ley 25413": 1036.82,
+"Impuesto Al Debito - Ley 25413": 2420.56
+}
+},
+"Gastos de Administracion": {
+"total": 38457.19,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 299.17,
+"Alquiler Deposito Pacheco": 7305.94,
+"Alquiler Fotocopiadora": 209.09,
+"Alquiler Oficinas Monroe 5088": 4383.56,
+"Encomiendas Y Correos": 193.1,
+"Expensas Deposito Pacheco": 953.13,
+"Expensas Monroe 5088": 780.27,
+"Gastos Grales De Administracion": 38.24,
+"Gastos Limpieza": 1589.56,
+"Guarderia Cascos": 148.42,
+"Honorarios Contables": 903.83,
+"Honorarios Por Sistemas": 699.68,
+"Imprenta Y Grafica": 1044.66,
+"Internet Y Dominio Web": 69.12,
+"Libreria Y Papeleria": 231.85,
+"Seguro Rodados": 932.56,
+"Seguros Edificio Y Caucion": 477.74,
+"Servicios De 3Ros": 17721.83,
+"Software Y Gastos Computacion": 467.22,
+"Viaticos Y Movilidad": 8.22
+}
+},
+"Gastos de Comercializacion": {
+"total": 45892.27,
+"items": {
+"Combustible-Adm": 514.91,
+"Comisiones Vendedores - Indirectas": 5163.06,
+"Fletes Y Acarreos Logistica": 3972.6,
+"Gastos Grales. Comercializ.": 971.43,
+"Gastos Stand Y Expo": 14181.74,
+"Impuesto Interno": 1983.13,
+"Mant. De Maquinarias Y Rodados": 6821.24,
+"Mercaderia De Muestra Clientes": 247.14,
+"Peajes Y Estacionamiento": 267.02,
+"Publicidad Y Propaganda": 1337.17,
+"Servicio Almacenamiento Y Embalaje De Terceros": 10432.83
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 28214.96,
+"items": {
+"Cargas Sociales": 5769.89,
+"Gastos Rubrica Digital - Libro Sueldos": 7.07,
+"Honorarios Administrativos": 935.2,
+"Retiro F. Laje Para Sueldos": 1068.49,
+"Sueldos Y Jornales - Microbell": 20434.31
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1056.33,
+"items": {
+"Electricidad - Luz": 684.12,
+"Telefonos Celulares Y Radios": 45.63,
+"Telefonos Fijos - Ip - Internet": 326.58
+}
+},
+"Gastos en Sucursales": {
+"total": 2845.91,
+"items": {
+"Alquileres Youknow": 456.62,
+"Cargas Sociales - Youknow": 473.3,
+"Encomiendas Y Correos - Youknow": 149.32,
+"Servicio De Terminales Pway": 95.89,
+"Sueldos Y Jornales Youknow": 1670.78
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 4168.55,
+"items": {
+"Embargo Judicial Afip O Rentas": 115.42,
+"Impuesto Pais - Ley 27541": 3723.96,
+"Impuestos,Tasas Y Contribuciones": 310.57,
+"Plan Facilidades Agip": 18.6
+}
+},
+"Otros Gastos": {
+"total": 2468.89,
+"items": {
+"Gastos Personal Fernando Laje": 2468.89
+}
+}
+},
+"2025-07": {
+"Gastos Comercializacion Retails": {
+"total": 8230.48,
+"items": {
+"Comisiones Comercializacion Hipermercados": 1718.55,
+"Gastos Comercializacion Hipermercados": 6511.93
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 1401.65,
+"items": {
+"Cargo Por Mercado Envios": 1400.42,
+"Cargos Por Servicios - Ecommerce": 1.23
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 147.53,
+"items": {
+"Comisiones Marketplace": 147.53
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 9363.36,
+"items": {
+"Cargas Sociales Ecommerce": 698.03,
+"Cargo Plataforma Mercado Pago": 22.67,
+"Cargo Por Comisiones Mercado Libre": 5440.29,
+"Sueldos Y Jornales - Ecommerce": 3202.37
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 43.82,
+"items": {
+"Gastos Ecommerce - Youknow": 43.82
+}
+},
+"Gastos Financieros": {
+"total": 30777.94,
+"items": {
+"Comisiones Y Gastos Bancarios": 26548.54,
+"Impuesto Al Credito - Ley 25413": 1728.04,
+"Impuesto Al Debito - Ley 25413": 2501.36
+}
+},
+"Gastos de Administracion": {
+"total": 27434.92,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 86.73,
+"Alquiler Deposito Pacheco": 7905.22,
+"Alquiler Fotocopiadora": 201.88,
+"Alquiler Oficinas Monroe 5088": 4511.42,
+"Encomiendas Y Correos": 197.52,
+"Expensas Deposito Pacheco": 924.37,
+"Expensas Monroe 5088": 763.51,
+"Gastos Grales De Administracion": 35.61,
+"Gastos Limpieza": 58.0,
+"Guarderia Cascos": 291.63,
+"Honorarios Contables": 912.96,
+"Honorarios Por Sistemas": 638.99,
+"Internet Y Dominio Web": 69.12,
+"Libreria Y Papeleria": 5.25,
+"Seguro Rodados": 633.52,
+"Sellados Y Certificaciones": 2223.94,
+"Servicios De 3Ros": 7431.66,
+"Software Y Gastos Computacion": 433.16,
+"Viaticos Y Movilidad": 110.43
+}
+},
+"Gastos de Comercializacion": {
+"total": 32731.78,
+"items": {
+"Combustible-Adm": 872.14,
+"Comisiones - Vendedores Directas": 1866.76,
+"Comisiones Vendedores - Indirectas": 6428.1,
+"Fletes Por Devoluciones": 49.59,
+"Fletes Y Acarreos Logistica": 5449.09,
+"Gastos De Representacion": 17.25,
+"Gastos Grales. Comercializ.": 1241.72,
+"Gastos Stand Y Expo": 661.25,
+"Impuesto Interno": 1867.34,
+"Mant. De Maquinarias Y Rodados": 807.92,
+"Peajes Y Estacionamiento": 549.2,
+"Publicidad Y Propaganda": 1273.64,
+"Servicio Almacenamiento Y Embalaje De Terceros": 11647.78
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 24393.81,
+"items": {
+"Cargas Sociales": 2739.76,
+"Gastos Rubrica Digital - Libro Sueldos": 6.13,
+"Retiro F. Laje Para Sueldos": 1009.42,
+"Sueldos Y Jornales - Microbell": 20638.5
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 944.97,
+"items": {
+"Electricidad - Luz": 605.12,
+"Telefonos Celulares Y Radios": 42.71,
+"Telefonos Fijos - Ip - Internet": 297.14
+}
+},
+"Gastos en Sucursales": {
+"total": 5509.42,
+"items": {
+"Alquileres Youknow": 416.67,
+"Cargas Sociales - Youknow": 302.13,
+"Encomiendas Y Correos - Youknow": 206.72,
+"Publicidad Y Propaganda Youknow": 1119.22,
+"Servicio De Terminales Pway": 981.64,
+"Sueldos Y Jornales Youknow": 2483.04
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 275.3,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 258.33,
+"Plan Facilidades Agip": 16.97
+}
+},
+"Otros Gastos": {
+"total": 527.11,
+"items": {
+"Gastos Personal Fernando Laje": 527.11
+}
+}
+},
+"2025-08": {
+"Gastos Comercializacion Retails": {
+"total": 233.97,
+"items": {
+"Gastos Comercializacion Hipermercados": 233.97
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 2121.96,
+"items": {
+"Cargo Por Mercado Envios": 2040.5,
+"Cargos Por Servicios - Ecommerce": 81.46
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 86.18,
+"items": {
+"Comisiones Marketplace": 86.18
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 7383.02,
+"items": {
+"Cargas Sociales Ecommerce": 640.88,
+"Cargo Plataforma Mercado Pago": 111.27,
+"Cargo Por Comisiones Mercado Libre": 3692.29,
+"Sueldos Y Jornales - Ecommerce": 2938.58
+}
+},
+"Gastos Financieros": {
+"total": 14833.14,
+"items": {
+"Comisiones Y Gastos Bancarios": 13112.4,
+"Impuesto Al Credito - Ley 25413": 821.0,
+"Impuesto Al Debito - Ley 25413": 899.74
+}
+},
+"Gastos de Administracion": {
+"total": 30399.9,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 398.17,
+"Alquiler Deposito Pacheco": 7213.51,
+"Alquiler Fotocopiadora": 195.76,
+"Alquiler Oficinas Monroe 5088": 4500.0,
+"Encomiendas Y Correos": 268.91,
+"Expensas Deposito Pacheco": 819.46,
+"Expensas Monroe 5088": 832.22,
+"Gastos Grales De Administracion": 38.98,
+"Gastos Limpieza": 1451.39,
+"Guarderia Cascos": 13.89,
+"Honorarios Contables": 772.49,
+"Honorarios Por Sistemas": 658.14,
+"Imprenta Y Grafica": 1437.5,
+"Internet Y Dominio Web": 63.07,
+"Libreria Y Papeleria": 264.33,
+"Mensajeria": 20.45,
+"Seguro Rodados": 993.81,
+"Sellados Y Certificaciones": 138.43,
+"Servicios De 3Ros": 9809.12,
+"Software Y Gastos Computacion": 401.26,
+"Viaticos Y Movilidad": 109.01
+}
+},
+"Gastos de Comercializacion": {
+"total": 34033.93,
+"items": {
+"Combustible-Adm": 817.34,
+"Comisiones - Vendedores Directas": 1139.93,
+"Comisiones Vendedores - Indirectas": 14417.15,
+"Fletes Por Devoluciones": 19.26,
+"Fletes Y Acarreos Logistica": 2533.1,
+"Gastos Grales. Comercializ.": 834.53,
+"Gastos Stand Y Expo": 76.84,
+"Mercaderia Obsequio": 1072.09,
+"Peajes Y Estacionamiento": 599.82,
+"Publicidad Y Propaganda": 1281.5,
+"Servicio Almacenamiento Y Embalaje De Terceros": 11242.37
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 24839.14,
+"items": {
+"Cargas Sociales": 3193.55,
+"Gastos Rubrica Digital - Libro Sueldos": 5.92,
+"Honorarios Administrativos": 759.62,
+"Retiro F. Laje Para Sueldos": 992.66,
+"Sueldos Y Jornales - Microbell": 19887.39
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 894.28,
+"items": {
+"Electricidad - Luz": 609.7,
+"Telefonos Fijos - Ip - Internet": 284.58
+}
+},
+"Gastos en Sucursales": {
+"total": 3669.12,
+"items": {
+"Cargas Sociales - Youknow": 277.38,
+"Encomiendas Y Correos - Youknow": 83.0,
+"Publicidad Y Propaganda Youknow": 98.6,
+"Servicio De Terminales Pway": 892.4,
+"Sueldos Y Jornales Youknow": 2317.74
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 214.25,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 129.88,
+"Plan Facilidades Agip": 16.97,
+"Retenciones Municipales Por Ventas": 67.4
+}
+},
+"Otros Gastos": {
+"total": 2125.16,
+"items": {
+"Gastos Personal Fernando Laje": 2125.16
+}
+}
+},
+"2025-09": {
+"Gastos Ecommerce - Microbell": {
+"total": 1407.5,
+"items": {
+"Cargo Por Mercado Envios": 1133.14,
+"Cargos Por Servicios - Ecommerce": 274.36
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 91.24,
+"items": {
+"Comisiones Marketplace": 91.24
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 6584.89,
+"items": {
+"Cargas Sociales Ecommerce": 610.21,
+"Cargo Plataforma Mercado Pago": 329.59,
+"Cargo Por Comisiones Mercado Libre": 2822.95,
+"Sueldos Y Jornales - Ecommerce": 2822.14
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 26.92,
+"items": {
+"Gastos Ecommerce - Youknow": 26.92
+}
+},
+"Gastos Financieros": {
+"total": 92454.17,
+"items": {
+"Comisiones Y Gastos Bancarios": 78112.51,
+"Diferencia De Cotizacion Negativa": 11991.43,
+"Impuesto Al Credito - Ley 25413": 977.25,
+"Impuesto Al Debito - Ley 25413": 1372.98
+}
+},
+"Gastos de Administracion": {
+"total": 26247.73,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 67.44,
+"Alquiler Deposito Pacheco": 6557.74,
+"Alquiler Maquina Dispenser": 56.08,
+"Alquiler Oficinas Monroe 5088": 4166.67,
+"Encomiendas Y Correos": 420.3,
+"Expensas Deposito Pacheco": 776.16,
+"Expensas Monroe 5088": 768.53,
+"Ferreteria Manten. De Edificio Pintura": 40.75,
+"Gastos Grales De Administracion": 36.5,
+"Gastos Limpieza": 56.45,
+"Guarderia Cascos": 131.42,
+"Honorarios Abogados": 108.18,
+"Honorarios Contables": 787.94,
+"Honorarios Por Sistemas": 634.29,
+"Imprenta Y Grafica": 1357.71,
+"Internet Y Dominio Web": 57.34,
+"Libreria Y Papeleria": 326.42,
+"Seguro Rodados": 932.77,
+"Seguros Edificio Y Caucion": 420.59,
+"Sellados Y Certificaciones": 661.2,
+"Servicios De 3Ros": 7497.73,
+"Software Y Gastos Computacion": 385.52
+}
+},
+"Gastos de Comercializacion": {
+"total": 36380.22,
+"items": {
+"Combustible-Adm": 454.62,
+"Comisiones - Vendedores Directas": 285.01,
+"Comisiones Vendedores - Indirectas": 11951.74,
+"Fletes Y Acarreos Logistica": 952.15,
+"Gastos Grales. Comercializ.": 1356.71,
+"Gastos Stand Y Expo": 6856.06,
+"Mant. De Maquinarias Y Rodados": 1098.48,
+"Peajes Y Estacionamiento": 313.93,
+"Publicidad Y Propaganda": 2149.85,
+"Servicio Almacenamiento Y Embalaje De Terceros": 10961.67
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 26489.97,
+"items": {
+"Cargas Sociales": 3325.28,
+"Gastos Rubrica Digital - Libro Sueldos": 5.92,
+"Honorarios Administrativos": 3352.45,
+"Retiro F. Laje Para Sueldos": 437.23,
+"Sueldos Y Jornales - Microbell": 19369.09
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 874.47,
+"items": {
+"Electricidad - Luz": 522.51,
+"Telefonos Celulares Y Radios": 80.12,
+"Telefonos Fijos - Ip - Internet": 271.84
+}
+},
+"Gastos en Sucursales": {
+"total": 2789.28,
+"items": {
+"Cargas Sociales - Youknow": 264.91,
+"Encomiendas Y Correos - Youknow": 135.64,
+"Publicidad Y Propaganda Youknow": 319.61,
+"Sueldos Y Jornales Youknow": 2069.12
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 1239.1,
+"items": {
+"Embargo Judicial Afip O Rentas": 117.65,
+"Igj-Inspeccion Gral De Justicia": 21.43,
+"Impuestos,Tasas Y Contribuciones": 257.06,
+"Multas Dgr": 827.53,
+"Plan Facilidades Agip": 15.43
+}
+},
+"Otros Gastos": {
+"total": 2353.73,
+"items": {
+"Gastos Personal Fernando Laje": 787.92,
+"Otros Gastos Varios": 1565.81
+}
+}
+},
+"2025-10": {
+"Gastos Ecommerce - Microbell": {
+"total": 1534.4,
+"items": {
+"Cargo Por Mercado Envios": 1314.37,
+"Cargos Por Servicios - Ecommerce": 220.03
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 86.26,
+"items": {
+"Comisiones Marketplace": 86.26
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 7789.05,
+"items": {
+"Cargas Sociales Ecommerce": 616.15,
+"Cargo Plataforma Mercado Pago": 951.99,
+"Cargo Por Comisiones Mercado Libre": 3398.77,
+"Sueldos Y Jornales - Ecommerce": 2822.14
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 276.23,
+"items": {
+"Gastos Ecommerce - Youknow": 276.23
+}
+},
+"Gastos Financieros": {
+"total": 3872.86,
+"items": {
+"Comisiones Y Gastos Bancarios": 425.05,
+"Diferencia De Cotizacion Negativa": 26.83,
+"Impuesto Al Credito - Ley 25413": 2800.79,
+"Impuesto Al Debito - Ley 25413": 620.19
+}
+},
+"Gastos de Administracion": {
+"total": 19457.62,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 209.05,
+"Alquiler Deposito Pacheco": 6522.69,
+"Alquiler Fotocopiadora": 396.96,
+"Alquiler Oficinas Monroe 5088": 4142.86,
+"Encomiendas Y Correos": 169.94,
+"Expensas Deposito Pacheco": 1081.58,
+"Expensas Monroe 5088": 744.5,
+"Ferreteria Manten. De Edificio Pintura": 221.0,
+"Gastos Generales Oficina": 83.96,
+"Gastos Grales De Administracion": 35.08,
+"Gastos Judiciales": 15.46,
+"Gastos Limpieza": 653.33,
+"Guarderia Cascos": 123.91,
+"Honorarios Abogados": 143.88,
+"Honorarios Contables": 757.77,
+"Honorarios Por Sistemas": 570.16,
+"Internet Y Dominio Web": 54.06,
+"Libreria Y Papeleria": 148.11,
+"Seguro Rodados": 926.24,
+"Sellados Y Certificaciones": 939.98,
+"Servicios De 3Ros": 1071.43,
+"Software Y Gastos Computacion": 396.7,
+"Viaticos Y Movilidad": 48.97
+}
+},
+"Gastos de Comercializacion": {
+"total": 42263.28,
+"items": {
+"Combustible-Adm": 696.98,
+"Comisiones - Vendedores Directas": 1107.87,
+"Comisiones Vendedores - Indirectas": 7413.36,
+"Fletes Y Acarreos Logistica": 11612.29,
+"Gastos Grales. Comercializ.": 914.22,
+"Gastos Stand Y Expo": 7217.42,
+"Mant. De Maquinarias Y Rodados": 828.5,
+"Mercaderia Obsequio": 239.2,
+"Multa Dest Fuera Ter": 1286.15,
+"Peajes Y Estacionamiento": 404.21,
+"Publicidad Y Propaganda": 2649.99,
+"Servicio Almacenamiento Y Embalaje De Terceros": 7893.09
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 27951.33,
+"items": {
+"Cargas Sociales": 2400.49,
+"Gastos Rubrica Digital - Libro Sueldos": 6.17,
+"Honorarios Administrativos": 5054.34,
+"Retiro F. Laje Para Sueldos": 757.14,
+"Sueldos Y Jornales - Microbell": 19733.19
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 817.65,
+"items": {
+"Electricidad - Luz": 509.47,
+"Telefonos Celulares Y Radios": 48.45,
+"Telefonos Fijos - Ip - Internet": 259.73
+}
+},
+"Gastos en Sucursales": {
+"total": 5438.64,
+"items": {
+"Alquileres Youknow": 1110.71,
+"Cargas Sociales - Youknow": 1452.24,
+"Encomiendas Y Correos - Youknow": 135.0,
+"Servicio De Terminales Pway": 967.18,
+"Sueldos Y Jornales Youknow": 1773.51
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 16.39,
+"items": {
+"Intereses Y Rercargos Impositivos": 1.84,
+"Plan Facilidades Agip": 14.55
+}
+},
+"Otros Gastos": {
+"total": 1120.27,
+"items": {
+"Gastos Personal Fernando Laje": 1066.14,
+"Otros Gastos Varios": 54.13
+}
+}
+},
+"2025-11": {
+"Gastos Comercializacion Retails": {
+"total": 9335.02,
+"items": {
+"Comisiones Comercializacion Hipermercados": 4281.12,
+"Gastos Comercializacion Hipermercados": 5053.9
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 1560.75,
+"items": {
+"Cargo Por Mercado Envios": 1398.41,
+"Cargos Por Servicios - Ecommerce": 162.34
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 282.28,
+"items": {
+"Comisiones Marketplace": 282.28
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 9169.92,
+"items": {
+"Cargas Sociales Ecommerce": 626.24,
+"Cargo Plataforma Mercado Pago": 1095.75,
+"Cargo Por Comisiones Mercado Libre": 4591.49,
+"Sueldos Y Jornales - Ecommerce": 2856.44
+}
+},
+"Gastos Financieros": {
+"total": 3540.27,
+"items": {
+"Comisiones Y Gastos Bancarios": 513.03,
+"Impuesto Al Credito - Ley 25413": 1635.92,
+"Impuesto Al Debito - Ley 25413": 1391.32
+}
+},
+"Gastos de Administracion": {
+"total": 16438.5,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 109.86,
+"Alquiler Deposito Pacheco": 6522.69,
+"Alquiler Fotocopiadora": 195.43,
+"Alquiler Oficinas Monroe 5088": 4242.86,
+"Encomiendas Y Correos": 405.0,
+"Expensas Deposito Pacheco": 591.02,
+"Expensas Monroe 5088": 764.73,
+"Ferreteria Manten. De Edificio Pintura": 33.26,
+"Gastos Grales De Administracion": 35.08,
+"Gastos Judiciales": 30.57,
+"Gastos Limpieza": 42.32,
+"Guarderia Cascos": 131.12,
+"Honorarios Contables": 772.93,
+"Honorarios Por Sistemas": 735.48,
+"Imprenta Y Grafica": 592.77,
+"Internet Y Dominio Web": 55.2,
+"Libreria Y Papeleria": 163.54,
+"Seguro Rodados": 215.72,
+"Sellados Y Certificaciones": 41.44,
+"Servicios De 3Ros": 269.42,
+"Software Y Gastos Computacion": 408.2,
+"Viaticos Y Movilidad": 79.86
+}
+},
+"Gastos de Comercializacion": {
+"total": 36747.77,
+"items": {
+"Combustible-Adm": 683.35,
+"Comisiones - Vendedores Directas": 449.58,
+"Comisiones Vendedores - Indirectas": 6652.88,
+"Fletes Y Acarreos Logistica": 8858.06,
+"Gastos Grales. Comercializ.": 1909.33,
+"Mant. De Maquinarias Y Rodados": 563.07,
+"Multa Dest Fuera Ter": 1533.87,
+"Peajes Y Estacionamiento": 522.85,
+"Publicidad Y Propaganda": 2047.74,
+"Servicio Almacenamiento Y Embalaje De Terceros": 13527.04
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 31234.2,
+"items": {
+"Cargas Sociales": 2960.92,
+"Gastos Ayudantes Deposito": 71.43,
+"Gastos Rubrica Digital - Libro Sueldos": 6.17,
+"Honorarios Administrativos": 8153.16,
+"Retiro F. Laje Para Sueldos": 642.86,
+"Sueldos Y Jornales - Microbell": 19399.66
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 781.87,
+"items": {
+"Electricidad - Luz": 511.75,
+"Telefonos Fijos - Ip - Internet": 270.12
+}
+},
+"Gastos en Sucursales": {
+"total": 3241.63,
+"items": {
+"Alquileres Youknow": 376.79,
+"Cargas Sociales - Youknow": 235.34,
+"Encomiendas Y Correos - Youknow": 118.12,
+"Liqudaciones Finales - Youknow": 411.5,
+"Servicio De Terminales Pway": 297.59,
+"Sueldos Y Jornales Youknow": 1802.29
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 181.91,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 173.21,
+"Plan Facilidades Agip": 8.7
+}
+},
+"Otros Gastos": {
+"total": 76.04,
+"items": {
+"Devolucion A Cliente": -1077.28,
+"Gastos Personal Fernando Laje": 1153.32
+}
+}
+},
+"2025-12": {
+"Gastos Comercializacion Retails": {
+"total": 3935.65,
+"items": {
+"Comisiones Comercializacion Hipermercados": 3935.65
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 3581.2,
+"items": {
+"Cargo Por Mercado Envios": 3369.51,
+"Cargos Por Servicios - Ecommerce": 211.69
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 311.15,
+"items": {
+"Comisiones Marketplace": 311.15
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 18856.85,
+"items": {
+"Cargas Sociales Ecommerce": 872.5,
+"Cargo Plataforma Mercado Pago": 2587.05,
+"Cargo Por Comisiones Mercado Libre": 11075.55,
+"Sueldos Y Jornales - Ecommerce": 4321.75
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 22.26,
+"items": {
+"Gastos Ecommerce - Youknow": 22.26
+}
+},
+"Gastos Financieros": {
+"total": 15282.4,
+"items": {
+"Comisiones Y Gastos Bancarios": 11943.41,
+"Impuesto Al Credito - Ley 25413": 1331.28,
+"Impuesto Al Debito - Ley 25413": 2007.71
+}
+},
+"Gastos de Administracion": {
+"total": 26331.77,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 1391.13,
+"Alquiler Deposito Pacheco": 6522.69,
+"Alquiler Fotocopiadora": 190.0,
+"Alquiler Oficinas Monroe 5088": 4013.56,
+"Encomiendas Y Correos": 821.92,
+"Expensas Deposito Pacheco": 590.27,
+"Expensas Monroe 5088": 754.37,
+"Gastos Grales De Administracion": 34.48,
+"Gastos Limpieza": 1225.69,
+"Guarderia Cascos": 131.12,
+"Honorarios Abogados": 1344.98,
+"Honorarios Contables": 748.3,
+"Honorarios Por Sistemas": 552.79,
+"Imprenta Y Grafica": 231.86,
+"Internet Y Dominio Web": 55.2,
+"Libreria Y Papeleria": 34.57,
+"Seguro Rodados": 7093.55,
+"Servicios De 3Ros": 162.71,
+"Software Y Gastos Computacion": 398.68,
+"Viaticos Y Movilidad": 33.9
+}
+},
+"Gastos de Comercializacion": {
+"total": 43235.75,
+"items": {
+"Combustible-Adm": 740.61,
+"Comisiones - Vendedores Directas": 1048.98,
+"Comisiones Vendedores - Indirectas": 10509.89,
+"Fletes Y Acarreos Logistica": 9907.02,
+"Gastos Grales. Comercializ.": 708.9,
+"Mant. De Maquinarias Y Rodados": 753.47,
+"Multa Dest Fuera Ter": 951.94,
+"Peajes Y Estacionamiento": 388.69,
+"Publicidad Y Propaganda": 2333.7,
+"Servicio Almacenamiento Y Embalaje De Terceros": 15892.55
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 45471.11,
+"items": {
+"Cargas Sociales": 5509.96,
+"Honorarios Administrativos": 10301.88,
+"Retiro F. Laje Para Sueldos": 653.15,
+"Sueldos Y Jornales - Microbell": 29006.12
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 454.68,
+"items": {
+"Electricidad - Luz": 119.38,
+"Telefonos Celulares Y Radios": 77.85,
+"Telefonos Fijos - Ip - Internet": 257.45
+}
+},
+"Gastos en Sucursales": {
+"total": 2605.22,
+"items": {
+"Alquileres Youknow": 382.71,
+"Cargas Sociales - Youknow": 165.9,
+"Encomiendas Y Correos - Youknow": 232.11,
+"Sueldos Y Jornales Youknow": 1824.5
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 70.18,
+"items": {
+"Igj-Inspeccion Gral De Justicia": 1.69,
+"Intereses Y Rercargos Impositivos": 49.13,
+"Plan Facilidades Agip": 19.36
+}
+},
+"Otros Gastos": {
+"total": -145.57,
+"items": {
+"Devolucion A Cliente": -287.62,
+"Gastos Personal Fernando Laje": 142.05
+}
+}
+},
+"2026-01": {
+"Gastos Comercializacion Retails": {
+"total": 2617.87,
+"items": {
+"Comisiones Comercializacion Hipermercados": 2617.87
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 5629.97,
+"items": {
+"Cargo Por Mercado Envios": 5222.23,
+"Cargos Por Servicios - Ecommerce": 407.74
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 326.13,
+"items": {
+"Comisiones Marketplace": 326.13
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 24100.51,
+"items": {
+"Cargas Sociales Ecommerce": 685.2,
+"Cargo Plataforma Mercado Pago": 2863.64,
+"Cargo Por Comisiones Mercado Libre": 17264.33,
+"Sueldos Y Jornales - Ecommerce": 3287.34
+}
+},
+"Gastos Ecommerce Youknow": {
+"total": 7.25,
+"items": {
+"Gastos Ecommerce - Youknow": 7.25
+}
+},
+"Gastos Financieros": {
+"total": 13593.88,
+"items": {
+"Comisiones Y Gastos Bancarios": 10344.15,
+"Diferencia De Cotizacion Negativa": 29.57,
+"Impuesto Al Credito - Ley 25413": 1609.46,
+"Impuesto Al Debito - Ley 25413": 1610.7
+}
+},
+"Gastos de Administracion": {
+"total": 20086.76,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 26.89,
+"Alquiler Deposito Pacheco": 6627.49,
+"Alquiler Fotocopiadora": 187.42,
+"Alquiler Oficinas Monroe 5088": 4040.68,
+"Encomiendas Y Correos": 1228.08,
+"Expensas Deposito Pacheco": 600.15,
+"Expensas Monroe 5088": 838.3,
+"Gastos Generales Oficina": 33.22,
+"Gastos Grales De Administracion": 38.6,
+"Gastos Limpieza": 1903.02,
+"Guarderia Cascos": 126.41,
+"Honorarios Abogados": 2033.9,
+"Honorarios Contables": 820.89,
+"Honorarios Escribania": 259.8,
+"Honorarios Por Sistemas": 552.38,
+"Internet Y Dominio Web": 52.39,
+"Libreria Y Papeleria": 144.94,
+"Mensajeria": 12.2,
+"Seguros Edificio Y Caucion": 43.65,
+"Sellados Y Certificaciones": 19.93,
+"Servicios De 3Ros": 82.19,
+"Software Y Gastos Computacion": 414.23
+}
+},
+"Gastos de Comercializacion": {
+"total": 88990.05,
+"items": {
+"Combustible-Adm": 699.79,
+"Comisiones - Vendedores Directas": 1017.2,
+"Comisiones Vendedores - Indirectas": 23897.51,
+"Fletes Y Acarreos Logistica": 14403.38,
+"Gastos Grales. Comercializ.": 1645.69,
+"Gastos Stand Y Expo": 17200.68,
+"Mant. De Maquinarias Y Rodados": 187.63,
+"Mercaderia Obsequio": 105.33,
+"Peajes Y Estacionamiento": 569.09,
+"Publicidad Y Propaganda": 1597.87,
+"Servicio Almacenamiento Y Embalaje De Terceros": 27665.88
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 33083.51,
+"items": {
+"Cargas Sociales": 3068.87,
+"Gastos Rubrica Digital - Libro Sueldos": 13.04,
+"Honorarios Administrativos": 7123.48,
+"Retiro F. Laje Para Sueldos": 169.49,
+"Sueldos Y Jornales - Microbell": 22708.63
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1837.23,
+"items": {
+"Electricidad - Luz": 1515.69,
+"Telefonos Celulares Y Radios": 48.86,
+"Telefonos Fijos - Ip - Internet": 272.68
+}
+},
+"Gastos en Sucursales": {
+"total": 700.78,
+"items": {
+"Encomiendas Y Correos - Youknow": 202.63,
+"Sueldos Y Jornales Youknow": 498.15
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 13.81,
+"items": {
+"Plan Facilidades Agip": 13.81
+}
+},
+"Otros Gastos": {
+"total": 80.34,
+"items": {
+"Gastos Personal Fernando Laje": 80.34
+}
+}
+},
+"2026-02": {
+"Gastos Comercializacion Retails": {
+"total": 752.51,
+"items": {
+"Gastos Comercializacion Hipermercados": 752.51
+}
+},
+"Gastos Ecommerce - Microbell": {
+"total": 4765.27,
+"items": {
+"Cargo Por Mercado Envios": 4643.2,
+"Cargos Por Servicios - Ecommerce": 122.07
+}
+},
+"Gastos Ecommerce Market Place": {
+"total": 109.36,
+"items": {
+"Comisiones Marketplace": 109.36
+}
+},
+"Gastos Ecommerce Microbell": {
+"total": 15587.2,
+"items": {
+"Cargas Sociales Ecommerce": 603.44,
+"Cargo Plataforma Mercado Pago": 1097.41,
+"Cargo Por Comisiones Mercado Libre": 10987.74,
+"Sueldos Y Jornales - Ecommerce": 2898.61
+}
+},
+"Gastos Financieros": {
+"total": 2617.33,
+"items": {
+"Comisiones Y Gastos Bancarios": 839.39,
+"Impuesto Al Credito - Ley 25413": 831.85,
+"Impuesto Al Debito - Ley 25413": 946.09
+}
+},
+"Gastos de Administracion": {
+"total": 13339.79,
+"items": {
+"Almuerzos Refrigerios Y Cafeteria": 106.43,
+"Alquiler Deposito Pacheco": 6627.49,
+"Alquiler Fotocopiadora": 187.42,
+"Alquiler Oficinas Monroe 5088": 4044.39,
+"Encomiendas Y Correos": 329.96,
+"Ferreteria Manten. De Edificio Pintura": 7.53,
+"Gastos Grales De Administracion": 38.6,
+"Gastos Limpieza": -624.31,
+"Guarderia Cascos": 138.51,
+"Honorarios Abogados": 210.38,
+"Honorarios Contables": 778.53,
+"Honorarios Por Sistemas": 552.91,
+"Internet Y Dominio Web": 52.39,
+"Libreria Y Papeleria": 430.57,
+"Seguros Edificio Y Caucion": 24.46,
+"Software Y Gastos Computacion": 434.53
+}
+},
+"Gastos de Comercializacion": {
+"total": 33684.36,
+"items": {
+"Combustible-Adm": 431.17,
+"Comisiones - Vendedores Directas": 228.01,
+"Comisiones Vendedores - Indirectas": 6480.12,
+"Fletes Y Acarreos Logistica": 1092.2,
+"Gastos Grales. Comercializ.": 1348.82,
+"Patentes": 64.27,
+"Peajes Y Estacionamiento": 260.91,
+"Publicidad Y Propaganda": 1164.02,
+"Servicio Almacenamiento Y Embalaje De Terceros": 22614.84
+}
+},
+"Gastos en Recursos Humanos": {
+"total": 23713.07,
+"items": {
+"Cargas Sociales": 2771.42,
+"Gastos Rubrica Digital - Libro Sueldos": 5.99,
+"Honorarios Administrativos": 1959.61,
+"Retiro F. Laje Para Sueldos": 331.69,
+"Sueldos Y Jornales - Microbell": 18644.36
+}
+},
+"Gastos en Servicios Publicos": {
+"total": 1256.8,
+"items": {
+"Electricidad - Luz": 787.85,
+"Telefonos Celulares Y Radios": 54.33,
+"Telefonos Fijos - Ip - Internet": 414.62
+}
+},
+"Gastos en Sucursales": {
+"total": 468.15,
+"items": {
+"Alquileres Youknow": 382.71,
+"Encomiendas Y Correos - Youknow": 85.44
+}
+},
+"Impuestos Multas y Recargos": {
+"total": 21.04,
+"items": {
+"Impuestos,Tasas Y Contribuciones": 21.04
+}
+},
+"Otros Gastos": {
+"total": -546.17,
+"items": {
+"Devolucion A Cliente": -690.81,
+"Gastos Personal Fernando Laje": 144.64
+}
+}
+}
+};
+
 // ==== STATE ====
 let selectedMonths = [...MONTHS]; // all selected by default
 let charts = {};
@@ -560,13 +2048,20 @@ function refreshChips() {
 }
 
 function fmt(n) {
-  if(n===undefined||n===null||isNaN(n)) return '$0';
-  return '$'+Math.round(n).toLocaleString('es-AR');
+  if(n===undefined||n===null||isNaN(n)) return 'U$S 0';
+  var neg = n < 0;
+  var abs = Math.abs(Math.round(n));
+  return (neg ? '-' : '') + 'U$S ' + abs.toLocaleString('es-AR');
 }
 function fmtK(n) {
-  if(Math.abs(n)>=1000000) return '$'+(n/1000000).toFixed(2)+'M';
-  if(Math.abs(n)>=1000) return '$'+(n/1000).toFixed(1)+'K';
-  return '$'+Math.round(n);
+  if(n===undefined||n===null||isNaN(n)) return 'U$S 0';
+  var neg = n < 0;
+  var abs = Math.abs(n);
+  var s;
+  if(abs >= 1000000) s = (abs/1000000).toFixed(2)+'M';
+  else if(abs >= 1000) s = (abs/1000).toFixed(1)+'K';
+  else s = Math.round(abs).toString();
+  return (neg ? '-' : '') + 'U$S ' + s;
 }
 function pct(a,b) { return b?((a/b)*100).toFixed(1)+'%':'—'; }
 
@@ -609,13 +2104,13 @@ function updateVentas() {
     <div class="kpi-card" style="--kpi-color:var(--accent5)">
       <div class="kpi-label">💸 Gastos Operativos</div>
       <div class="kpi-value">${fmtK(totG)}</div>
-      <div class="kpi-sub">${pct(totG,totV)} sobre ventas</div>
-      <div class="kpi-badge badge-yellow">Gastos U$S</div>
+      <div class="kpi-sub">Hoja Datos · ${pct(totG,totV)} sobre ventas</div>
+      <div class="kpi-badge badge-yellow">Sin Movistar</div>
     </div>
     <div class="kpi-card" style="--kpi-color:${util>0?'var(--green)':'var(--red)'}">
       <div class="kpi-label">📊 Utilidad Neta</div>
       <div class="kpi-value">${fmtK(util)}</div>
-      <div class="kpi-sub">Venta − CMV − Gastos</div>
+      <div class="kpi-sub">Venta − CMV − Gastos Op.</div>
       <div class="kpi-badge ${util>0?'badge-green':'badge-red'}">${pctUtil}%</div>
     </div>`;
 
@@ -769,13 +2264,13 @@ function updateEconomico() {
     <div class="kpi-card" style="--kpi-color:var(--accent5)">
       <div class="kpi-label">💸 Gastos Operativos</div>
       <div class="kpi-value">${fmtK(totG)}</div>
-      <div class="kpi-sub">${pct(totG,totV)} sobre ventas</div>
-      <div class="kpi-badge badge-yellow">Gastos U$S</div>
+      <div class="kpi-sub">Hoja Datos · ${pct(totG,totV)} sobre ventas</div>
+      <div class="kpi-badge badge-yellow">Sin Movistar</div>
     </div>
     <div class="kpi-card" style="--kpi-color:${util>0?'var(--green)':'var(--red)'}">
       <div class="kpi-label">💹 Utilidad Neta</div>
       <div class="kpi-value">${fmtK(util)}</div>
-      <div class="kpi-sub">Venta − CMV − Gastos</div>
+      <div class="kpi-sub">Venta − CMV − Gastos Op.</div>
       <div class="kpi-badge ${util>0?'badge-green':'badge-red'}">${pctU}%</div>
     </div>`;
 
@@ -825,6 +2320,9 @@ function updateEconomico() {
   selectedMonths.forEach(m=>{ if(DATA_GV_MONTHLY[m]) Object.entries(DATA_GV_MONTHLY[m]).forEach(([k,v])=>{ gvData[k]=(gvData[k]||0)+v; }); });
   const gvL=Object.keys(gvData).sort((a,b)=>gvData[b]-gvData[a]);
   updateChart('chartDonutCanal','doughnut',gvL,gvL.map(k=>gvData[k]),['#00d4aa','#4f8ef7','#f7c84f','#f74f4f','#a64ff7'],false);
+
+  // Tabla gastos detalle
+  renderTablaGastos();
 }
 
 // ===== MOVISTAR =====
@@ -1216,6 +2714,130 @@ function updateMultiChart(id,labels,datasets,type) {
     }
   });
 }
+
+// ==== TABLA GASTOS DETALLE ====
+function renderTablaGastos() {
+  var box = document.getElementById('tablaGastosDetalle');
+  if (!box) return;
+
+  // Acumular gastos por grupo y descripcion en el periodo seleccionado
+  var grupoMap = {};
+  selectedMonths.forEach(function(mes) {
+    var d = DATA_GASTOS_DETALLE[mes];
+    if (!d) return;
+    Object.keys(d).forEach(function(grp) {
+      var gdata = d[grp];
+      if (!grupoMap[grp]) grupoMap[grp] = { total: 0, items: {} };
+      Object.keys(gdata.items || {}).forEach(function(desc) {
+        grupoMap[grp].items[desc] = (grupoMap[grp].items[desc] || 0) + gdata.items[desc];
+      });
+    });
+  });
+
+  // Recalcular totales y ordenar grupos de mayor a menor
+  var grupos = Object.keys(grupoMap).map(function(grp) {
+    var totalReal = Object.values(grupoMap[grp].items).reduce(function(s,v){ return s+v; }, 0);
+    grupoMap[grp].total = totalReal;
+    return [grp, grupoMap[grp]];
+  }).sort(function(a,b){ return b[1].total - a[1].total; });
+
+  var totalGral = grupos.reduce(function(s,g){ return s + g[1].total; }, 0);
+
+  var COLORES_GRUPO = [
+    '#f74f4f','#4f8ef7','#f7c84f','#00d4aa','#a64ff7',
+    '#00b4f0','#2ecc71','#f39c12','#9b59b6','#1abc9c',
+    '#e67e22','#e74c3c','#3498db'
+  ];
+
+  var out = '<style>';
+  out += '.gastos-grupo{margin-bottom:10px;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,.08);}';
+  out += '.gastos-grupo-header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;cursor:pointer;user-select:none;background:rgba(255,255,255,.04);transition:background .15s;}';
+  out += '.gastos-grupo-header:hover{background:rgba(255,255,255,.08);}';
+  out += '.gastos-grupo-left{display:flex;align-items:center;gap:10px;}';
+  out += '.gastos-grupo-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}';
+  out += '.gastos-grupo-name{font-size:13px;font-weight:700;color:#ffffff;}';
+  out += '.gastos-grupo-pct{font-size:11px;color:rgba(255,255,255,.5);margin-left:6px;}';
+  out += '.gastos-grupo-right{display:flex;align-items:center;gap:14px;}';
+  out += '.gastos-grupo-total{font-size:14px;font-weight:800;color:#f7c84f;}';
+  out += '.gastos-grupo-arrow{font-size:12px;color:rgba(255,255,255,.4);transition:transform .2s;display:inline-block;}';
+  out += '.gastos-grupo-arrow.open{transform:rotate(180deg);}';
+  out += '.gastos-grupo-bar{height:3px;background:rgba(255,255,255,.06);}';
+  out += '.gastos-grupo-bar-fill{height:3px;transition:width .4s;}';
+  out += '.gastos-items{display:none;}';
+  out += '.gastos-items.open{display:block;}';
+  out += '.gastos-item{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 8px 38px;border-top:1px solid rgba(255,255,255,.04);font-size:12px;}';
+  out += '.gastos-item:hover{background:rgba(255,255,255,.03);}';
+  out += '.gastos-item-desc{color:rgba(255,255,255,.8);flex:1;}';
+  out += '.gastos-item-val{font-weight:600;color:#ffffff;min-width:90px;text-align:right;}';
+  out += '.gastos-item-val.neg{color:#f74f4f;}';
+  out += '.gastos-total-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:rgba(247,200,79,.08);border-top:2px solid rgba(247,200,79,.3);border-radius:0 0 10px 10px;font-size:13px;font-weight:800;}';
+  out += '.gastos-nota{font-size:11px;color:rgba(255,255,255,.4);margin-top:8px;padding:8px 12px;background:rgba(255,255,255,.03);border-radius:8px;border-left:3px solid rgba(79,142,247,.4);}';
+  out += '</style>';
+
+  grupos.forEach(function(entry, gi) {
+    var grp   = entry[0];
+    var gdata = entry[1];
+    var pct   = totalGral ? (gdata.total / totalGral * 100).toFixed(1) : '0';
+    var barPct= totalGral ? Math.min(100, Math.abs(gdata.total / totalGral * 100)).toFixed(1) : '0';
+    var color = COLORES_GRUPO[gi % COLORES_GRUPO.length];
+    var gid   = 'grp_' + gi;
+
+    // Items: positivos mayor→menor, negativos al final
+    var items = Object.keys(gdata.items).map(function(k){ return [k, gdata.items[k]]; })
+      .sort(function(a,b){
+        if (a[1] >= 0 && b[1] >= 0) return b[1] - a[1];
+        if (a[1] < 0  && b[1] < 0)  return a[1] - b[1];
+        return a[1] < 0 ? 1 : -1;
+      });
+
+    out += '<div class="gastos-grupo">';
+    out += '<div class="gastos-grupo-header" onclick="toggleGrupo(\'' + gid + '\')">';
+    out += '<div class="gastos-grupo-left">';
+    out += '<div class="gastos-grupo-dot" style="background:' + color + '"></div>';
+    out += '<span class="gastos-grupo-name">' + grp + '</span>';
+    out += '<span class="gastos-grupo-pct">(' + pct + '% del total)</span>';
+    out += '</div>';
+    out += '<div class="gastos-grupo-right">';
+    out += '<span class="gastos-grupo-total">' + fmt(gdata.total) + '</span>';
+    out += '<span class="gastos-grupo-arrow" id="arr_' + gid + '">▼</span>';
+    out += '</div></div>';
+    out += '<div class="gastos-grupo-bar"><div class="gastos-grupo-bar-fill" style="width:' + barPct + '%;background:' + color + '"></div></div>';
+    out += '<div class="gastos-items" id="' + gid + '">';
+
+    items.forEach(function(item) {
+      var desc = item[0];
+      var val  = item[1];
+      var neg  = val < 0 ? ' neg' : '';
+      out += '<div class="gastos-item">';
+      out += '<span class="gastos-item-desc">' + desc + '</span>';
+      out += '<span class="gastos-item-val' + neg + '">' + fmt(val) + '</span>';
+      out += '</div>';
+    });
+
+    out += '</div></div>';
+  });
+
+  // Total general
+  out += '<div class="gastos-total-row">';
+  out += '<span>TOTAL GASTOS OPERATIVOS</span>';
+  out += '<span style="color:#f7c84f">' + fmt(totalGral) + '</span>';
+  out += '</div>';
+
+  // Nota fuente de datos
+  out += '<div class="gastos-nota">📊 <strong>Fuente:</strong> Hoja Datos · Gastos operativos por Grupo y Descripción. El total incluye también Gastos Movistar (hoja Gastos Movistar). Todos los valores en U$S.</div>';
+
+  box.innerHTML = out;
+}
+
+function toggleGrupo(id) {
+  var el  = document.getElementById(id);
+  var arr = document.getElementById('arr_' + id);
+  if (!el) return;
+  var isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  if (arr) arr.classList.toggle('open', !isOpen);
+}
+
 
 // ==== TAB SWITCH ====
 function switchTab(tab) {
