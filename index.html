@@ -163,6 +163,10 @@
   .login-btn:hover { opacity: .85; }
   .login-err { color: var(--red); font-size: 12px; margin-top: 10px; display: none; }
 
+  /* Forzar color blanco en leyendas Chart.js */
+  canvas { color: #ffffff !important; }
+  .chart-wrap canvas { color: #ffffff !important; }
+
   /* responsive */
   @media(max-width:900px) {
     .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -240,12 +244,12 @@
     <div class="chart-card">
       <div class="chart-title">Ventas por Grupo Super Rubro</div>
       <div class="chart-sub">Distribución U$S en el período seleccionado</div>
-      <div class="chart-wrap" style="height:260px"><canvas id="chartSuperRubro"></canvas></div>
+      <div class="chart-wrap" style="height:300px"><canvas id="chartSuperRubro"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Ventas por Grupo de Ventas</div>
       <div class="chart-sub">Canal de venta en U$S</div>
-      <div class="chart-wrap" style="height:260px"><canvas id="chartGrupoVentas"></canvas></div>
+      <div class="chart-wrap" style="height:300px"><canvas id="chartGrupoVentas"></canvas></div>
     </div>
   </div>
 
@@ -308,12 +312,12 @@
     <div class="chart-card">
       <div class="chart-title">Composición de Ventas por Rubro</div>
       <div class="chart-sub">Participación % Grupo Super Rubro</div>
-      <div class="chart-wrap" style="height:280px"><canvas id="chartDonutRubro"></canvas></div>
+      <div class="chart-wrap" style="height:320px"><canvas id="chartDonutRubro"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Composición por Canal</div>
       <div class="chart-sub">Participación % por Grupo de Ventas</div>
-      <div class="chart-wrap" style="height:280px"><canvas id="chartDonutCanal"></canvas></div>
+      <div class="chart-wrap" style="height:320px"><canvas id="chartDonutCanal"></canvas></div>
     </div>
   </div>
 </div>
@@ -344,7 +348,7 @@
     <div class="chart-card">
       <div class="chart-title">Composición de Gastos Movistar</div>
       <div class="chart-sub">Por tipo de gasto — período seleccionado</div>
-      <div class="chart-wrap" style="height:300px"><canvas id="chartMovTipoGasto"></canvas></div>
+      <div class="chart-wrap" style="height:340px"><canvas id="chartMovTipoGasto"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">% Gastos sobre Facturación</div>
@@ -366,7 +370,7 @@
     <div class="chart-card">
       <div class="chart-title">Gastos Fijos Febrero 2026 — Base para Proyección</div>
       <div class="chart-sub">Estructura de costos fijos operativos en U$S</div>
-      <div class="chart-wrap" style="height:380px"><canvas id="chartPeGastos"></canvas></div>
+      <div class="chart-wrap" style="height:420px"><canvas id="chartPeGastos"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-title">Análisis Punto de Equilibrio — Marzo 2026</div>
@@ -385,6 +389,29 @@
 </div><!-- /main -->
 
 <script>
+// ===== CHART.JS GLOBAL DEFAULTS — color blanco forzado =====
+Chart.defaults.color = '#ffffff';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.12)';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.plugins.legend.labels.color = '#ffffff';
+Chart.defaults.plugins.legend.labels.font = { size: 11 };
+Chart.defaults.plugins.legend.labels.padding = 14;
+Chart.defaults.plugins.tooltip.titleColor = '#ffffff';
+Chart.defaults.plugins.tooltip.bodyColor = '#ffffffcc';
+Chart.defaults.scale.ticks.color = '#ffffff';
+Chart.defaults.scale.grid.color = 'rgba(255,255,255,0.08)';
+Chart.defaults.scale.title.color = '#ffffff';
+// Plugin global: fuerza color blanco en texto de leyenda después de cada render
+Chart.register({
+  id: 'whiteLegend',
+  afterDraw(chart) {
+    const legendPlugin = chart.legend;
+    if (!legendPlugin || !legendPlugin.legendItems) return;
+    legendPlugin.legendItems.forEach(item => { item.fontColor = '#ffffff'; });
+  }
+});
+
 // ===== PASSWORD PROTECTION =====
 const PASS = 'Micro2026';
 function doLogin() {
@@ -644,7 +671,7 @@ function updateEconomico() {
     if(!d||!d.Venta) return 0;
     return +((d.Venta-d.Costo)/d.Venta*100).toFixed(1);
   });
-  updateChart('chartPctMargen','line',selLabels,pctMargen,['#00d4aa'],false,'',true,'%');
+  updateChart('chartPctMargen','line',selLabels,pctMargen,['#00d4aa'],true,'',true,'%');
 
   // Eco completo
   const allL=MONTHS.map((_,i)=>MONTH_LABELS[i]);
@@ -709,7 +736,7 @@ function updateMovistar() {
 
   // Resultado (diferencia)
   const sRes=selectedMonths.map(m=>((DATA_MOV[m]?.Venta||0)-(DATA_MOV[m]?.Gastos||0)));
-  updateChart('chartMovResultado','bar',selL,sRes,sRes.map(v=>v>=0?'#2ecc71':'#e74c3c'),false,'vertical');
+  updateChart('chartMovResultado','bar',selL,sRes,sRes.map(v=>v>=0?'#2ecc71':'#e74c3c'),true,'vertical');
 
   // Tipo gasto donut (total selected)
   const tipoGasto = {
@@ -723,7 +750,7 @@ function updateMovistar() {
 
   // Eficiencia
   const efic=selectedMonths.map(m=>{ const d=DATA_MOV[m]; if(!d||!d.Venta) return 0; return +((d.Gastos/d.Venta)*100).toFixed(1); });
-  updateChart('chartMovEficiencia','bar',selL,efic,efic.map(v=>v<80?'#2ecc71':v<100?'#f1c40f':'#e74c3c'),false,'vertical',false,'%');
+  updateChart('chartMovEficiencia','bar',selL,efic,efic.map(v=>v<80?'#2ecc71':v<100?'#f1c40f':'#e74c3c'),true,'vertical',false,'%');
 }
 
 // ===== PE =====
@@ -857,12 +884,36 @@ function updatePE() {
     options:{
       responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{labels:{color:'#7b82a0',font:{size:11}}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtK(c.raw)}`}}
+        legend:{
+          display:true,
+          position:'top',
+          labels:{
+            color:'#ffffff',font:{size:11},padding:16,
+            usePointStyle:true,pointStyleWidth:10
+          }
+        },
+        tooltip:{
+          mode:'index',intersect:false,
+          callbacks:{
+            label:c=>c.raw!=null?' '+c.dataset.label+': '+fmtK(c.raw):null,
+            title:t=>'Nivel de ventas: '+t[0].label
+          },
+          backgroundColor:'rgba(26,29,39,.95)',
+          titleColor:'#ffffff',bodyColor:'#ffffffcc',
+          borderColor:'rgba(247,200,79,.4)',borderWidth:1,padding:12
+        }
       },
       scales:{
-        x:{ticks:{color:'#7b82a0',font:{size:10},maxTicksLimit:10},grid:{color:'rgba(42,45,62,.4)'}},
-        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
+        x:{
+          title:{display:true,text:'Nivel de Ventas U$S',color:'#ffffff',font:{size:11}},
+          ticks:{color:'#ffffff',font:{size:10},maxTicksLimit:10},
+          grid:{color:'rgba(42,45,62,.4)'}
+        },
+        y:{
+          title:{display:true,text:'Importe U$S',color:'#ffffff',font:{size:11}},
+          ticks:{color:'#ffffff',font:{size:10},callback:v=>fmtK(v)},
+          grid:{color:'rgba(42,45,62,.4)'}
+        }
       },
       interaction:{intersect:false,mode:'index'}
     }
@@ -879,6 +930,10 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
   const ctx=document.getElementById(id)?.getContext('2d');
   if(!ctx) return;
   const isHoriz = orient==='horizontal';
+  const isDoughnut = type==='doughnut';
+  // Doughnut siempre muestra leyenda; barras horizontales también
+  const displayLegend = isDoughnut || showLegend || isHoriz;
+  const legendPos = isDoughnut ? 'right' : isHoriz ? 'top' : 'top';
   charts[id]=new Chart(ctx,{
     type:type==='bar'&&isHoriz?'bar':type,
     data:{
@@ -886,8 +941,8 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
       datasets:[{
         data,
         backgroundColor:Array.isArray(colors)?colors:labels.map((_,i)=>colors[i%colors.length]),
-        borderColor:type==='line'?colors[0]:'transparent',
-        borderWidth:type==='line'?2:0,
+        borderColor:type==='line'?colors[0]:'rgba(255,255,255,.08)',
+        borderWidth:type==='line'?2:isDoughnut?2:0,
         fill:type==='line'?false:undefined,
         tension:tension?0.3:0,
         pointRadius:type==='line'?3:0
@@ -897,12 +952,53 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
       indexAxis:isHoriz?'y':'x',
       responsive:true,maintainAspectRatio:false,
       plugins:{
-        legend:{display:showLegend||false,labels:{color:'#7b82a0',font:{size:10}}},
-        tooltip:{callbacks:{label:c=>`${c.dataset.label||''}: ${type==='line'&&yUnit?c.raw+yUnit:fmtK(c.raw)}`}}
+        legend:{
+          display:displayLegend,
+          position:legendPos,
+          labels:{
+            color:'#ffffff',
+            font:{size:10},
+            padding:10,
+            boxWidth:isDoughnut?14:10,
+            boxHeight:isDoughnut?14:10,
+            usePointStyle:isDoughnut,
+            pointStyleWidth:isDoughnut?10:undefined,
+            // Para doughnut mostrar valor en la leyenda
+            generateLabels: isDoughnut ? function(chart) {
+              const ds = chart.data.datasets[0];
+              const total = ds.data.reduce((a,b)=>a+(b||0),0);
+              return chart.data.labels.map((label,i)=>{
+                const val = ds.data[i]||0;
+                const pct = total>0?(val/total*100).toFixed(1):'0.0';
+                return {
+                  text: label+': '+fmtK(val)+' ('+pct+'%)',
+                  fillStyle: Array.isArray(ds.backgroundColor)?ds.backgroundColor[i]:ds.backgroundColor,
+                  strokeStyle: 'transparent',
+                  fontColor: '#ffffff',
+                  color: '#ffffff',
+                  pointStyle: 'circle',
+                  hidden: false,
+                  index: i
+                };
+              });
+            } : undefined
+          }
+        },
+        tooltip:{
+          callbacks:{
+            label: isDoughnut
+              ? function(c) {
+                  const total = c.dataset.data.reduce((a,b)=>a+(b||0),0);
+                  const pct = total>0?((c.raw/total)*100).toFixed(1):'0';
+                  return ' '+c.label+': '+fmtK(c.raw)+' ('+pct+'%)';
+                }
+              : c=>' '+(c.dataset.label||'')+': '+(type==='line'&&yUnit?c.raw+yUnit:fmtK(c.raw))
+          }
+        }
       },
-      scales:type==='doughnut'?{}:{
-        x:{ticks:{color:'#7b82a0',font:{size:10},maxRotation:35},grid:{color:'rgba(42,45,62,.4)'}},
-        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>type==='line'&&yUnit?v+yUnit:fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
+      scales:isDoughnut?{}:{
+        x:{ticks:{color:'#ffffff',font:{size:10},maxRotation:isHoriz?0:35},grid:{color:'rgba(42,45,62,.4)'}},
+        y:{ticks:{color:'#ffffff',font:{size:10},callback:v=>type==='line'&&yUnit?v+yUnit:fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
       }
     }
   });
@@ -919,20 +1015,50 @@ function updateMultiChart(id,labels,datasets,type) {
       datasets:datasets.map(d=>({
         label:d.label,
         data:d.data,
-        backgroundColor:type==='bar'?d.color+'80':d.color+'20',
+        backgroundColor:type==='bar'?d.color+'99':d.color+'25',
         borderColor:d.color,
-        borderWidth:type==='line'?2:0,
-        fill:type==='line'?false:true,
+        borderWidth:type==='line'?2.5:1,
+        fill:type==='line'?false:false,
         tension:type==='line'?0.3:0,
-        pointRadius:type==='line'?3:0
+        pointRadius:type==='line'?4:0,
+        pointHoverRadius:type==='line'?6:0,
+        pointBackgroundColor:type==='line'?d.color:'transparent'
       }))
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#7b82a0',font:{size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtK(c.raw)}`}}},
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          labels:{
+            color:'#ffffff',
+            font:{size:11},
+            padding:16,
+            boxWidth:12,
+            boxHeight:12,
+            usePointStyle:type==='line',
+            pointStyleWidth:type==='line'?10:undefined
+          }
+        },
+        tooltip:{
+          mode:'index',
+          intersect:false,
+          callbacks:{
+            label:c=>' '+c.dataset.label+': '+fmtK(c.raw),
+            title:t=>t[0].label
+          },
+          backgroundColor:'rgba(26,29,39,.95)',
+          titleColor:'#ffffff',
+          bodyColor:'#ffffffcc',
+          borderColor:'rgba(79,142,247,.3)',
+          borderWidth:1,
+          padding:12
+        }
+      },
       scales:{
-        x:{ticks:{color:'#7b82a0',font:{size:10},maxRotation:35},grid:{color:'rgba(42,45,62,.4)'},stacked:false},
-        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>fmtK(v)},grid:{color:'rgba(42,45,62,.4)'},stacked:false}
+        x:{ticks:{color:'#ffffff',font:{size:10},maxRotation:35},grid:{color:'rgba(42,45,62,.4)'},stacked:false},
+        y:{ticks:{color:'#ffffff',font:{size:10},callback:v=>fmtK(v)},grid:{color:'rgba(42,45,62,.4)'},stacked:false}
       },
       interaction:{intersect:false,mode:'index'}
     }
