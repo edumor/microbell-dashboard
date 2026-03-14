@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microbell S.A. — Dashboard Gerencial 2025-2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --card: #1e2130;
+    --border: #2a2d3e;
+    --accent: #4f8ef7;
+    --accent2: #00d4aa;
+    --accent3: #f7c84f;
+    --accent4: #f74f4f;
+    --accent5: #a64ff7;
+    --text: #e8eaf0;
+    --muted: #7b82a0;
+    --green: #2ecc71;
+    --red: #e74c3c;
+    --yellow: #f1c40f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* === HEADER === */
+  .header {
+    background: linear-gradient(135deg, #1a1d27 0%, #12151f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-logo { display: flex; align-items: center; gap: 12px; }
+  .header-logo .brand { font-size: 20px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+  .header-logo .sub { font-size: 12px; color: var(--muted); }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .period-badge { background: var(--surface); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--accent2); font-weight: 600; }
+  .last-update { font-size: 11px; color: var(--muted); }
+
+  /* === TABS === */
+  .tabs {
+    display: flex; gap: 2px; padding: 12px 24px 0; background: var(--bg);
+    border-bottom: 1px solid var(--border); overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+    border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none;
+    color: var(--muted); background: transparent; transition: all .2s; white-space: nowrap;
+  }
+  .tab:hover { color: var(--text); background: var(--surface); }
+  .tab.active { color: var(--accent); background: var(--surface); border-color: var(--border); }
+  .tab-icon { margin-right: 6px; }
+
+  /* === MAIN === */
+  .main { padding: 20px 24px; }
+
+  /* === FILTER BAR === */
+  .filter-bar {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 20px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .filter-label { font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+  .period-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border); background: transparent; color: var(--muted); transition: all .2s;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip-all { background: var(--accent5)!important; border-color: var(--accent5)!important; color: #fff; }
+
+  /* === KPI CARDS === */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
+  .kpi-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px; position: relative; overflow: hidden;
+  }
+  .kpi-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background: var(--kpi-color, var(--accent));
+  }
+  .kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: .7px; color: var(--muted); margin-bottom: 8px; }
+  .kpi-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+  .kpi-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .kpi-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; margin-top: 6px; }
+  .badge-green { background: rgba(46,204,113,.15); color: var(--green); }
+  .badge-red { background: rgba(231,76,60,.15); color: var(--red); }
+  .badge-yellow { background: rgba(241,196,15,.15); color: var(--yellow); }
+
+  /* === CHART GRID === */
+  .chart-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .chart-full { margin-bottom: 20px; }
+
+  .chart-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px;
+  }
+  .chart-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .chart-sub { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+  .chart-wrap { position: relative; }
+
+  /* === TABLE === */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--surface); color: var(--muted); text-transform: uppercase; letter-spacing: .5px; font-size: 11px; padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child { text-align: left; }
+  td { padding: 9px 12px; border-bottom: 1px solid rgba(42,45,62,.5); text-align: right; color: var(--text); }
+  td:first-child { text-align: left; color: var(--text); font-weight: 500; }
+  tr:hover td { background: rgba(79,142,247,.05); }
+  .rank { color: var(--muted); font-size: 11px; margin-right: 6px; }
+  .stock-badge { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 700; }
+  .stock-high { background: rgba(46,204,113,.15); color: var(--green); }
+  .stock-med { background: rgba(241,196,15,.15); color: var(--yellow); }
+  .stock-low { background: rgba(231,76,60,.15); color: var(--red); }
+
+  /* === PE SECTION === */
+  .pe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .pe-number { font-size: 32px; font-weight: 800; }
+  .pe-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .pe-row:last-child { border-bottom: none; font-weight: 700; }
+  .progress-bar { background: var(--surface); border-radius: 4px; height: 8px; margin-top: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 4px; transition: width .5s; }
+
+  /* === PAGINACION ESCALA TIEMPO === */
+  .timeline-nav { display: flex; gap: 6px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .tl-btn {
+    padding: 5px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted); transition: all .2s;
+  }
+  .tl-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tl-btn.tl-active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* page tabs */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* watermark login */
+  .login-overlay {
+    position: fixed; inset: 0; background: rgba(15,17,23,.95);
+    display: flex; align-items: center; justify-content: center; z-index: 999;
+  }
+  .login-box {
+    background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+    padding: 40px 48px; min-width: 360px; text-align: center;
+  }
+  .login-box h2 { font-size: 22px; color: var(--accent); margin-bottom: 6px; }
+  .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+  .login-input {
+    width: 100%; padding: 12px 16px; border-radius: 10px; font-size: 14px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    margin-bottom: 14px; outline: none;
+  }
+  .login-input:focus { border-color: var(--accent); }
+  .login-btn {
+    width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 700;
+    background: var(--accent); color: #fff; border: none; cursor: pointer; transition: opacity .2s;
+  }
+  .login-btn:hover { opacity: .85; }
+  .login-err { color: var(--red); font-size: 12px; margin-top: 10px; display: none; }
+
+  /* responsive */
+  @media(max-width:900px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .chart-grid-2, .chart-grid-3, .pe-grid { grid-template-columns: 1fr; }
+  }
+  @media(max-width:600px) {
+    .kpi-grid { grid-template-columns: 1fr; }
+    .main { padding: 12px; }
+    .header { padding: 12px 16px; }
+    .tabs { padding: 10px 12px 0; }
+  }
+
+  .section-divider { border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* Movistar colors */
+  .mov-card { --kpi-color: #00b4f0; }
+  .eco-card { --kpi-color: var(--accent2); }
+  .ven-card { --kpi-color: var(--accent3); }
+  .pe-card  { --kpi-color: var(--accent4); }
+</style>
+</head>
+<body>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay" style="display:none">
+  <div class="login-box">
+    <div style="font-size:40px;margin-bottom:12px">📊</div>
+    <h2>Microbell S.A.</h2>
+    <p>Dashboard Gerencial · Acceso Restringido</p>
+    <input type="password" class="login-input" id="pwdInput" placeholder="Ingresá la contraseña" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Ingresar →</button>
+    <div class="login-err" id="loginErr">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">
+    <div style="background:var(--accent);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;">M</div>
+    <div>
+      <div class="brand">Microbell S.A.</div>
+      <div class="sub">Dashboard Gerencial · Inteligencia Comercial</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="period-badge">Mar 2025 → Feb 2026</div>
+    <div class="last-update">📅 Stock al 13/03/2026</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('ventas')" id="tab-ventas"><span class="tab-icon">📈</span>Dashboard Ventas</div>
+  <div class="tab" onclick="switchTab('economico')" id="tab-economico"><span class="tab-icon">💰</span>Dashboard Económico</div>
+  <div class="tab" onclick="switchTab('movistar')" id="tab-movistar"><span class="tab-icon">📡</span>Dashboard Movistar</div>
+  <div class="tab" onclick="switchTab('pe')" id="tab-pe"><span class="tab-icon">⚖️</span>Punto de Equilibrio</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+<!-- ===== VENTAS ===== -->
+<div class="page active" id="page-ventas">
+  <!-- Period Filter -->
+  <div class="filter-bar">
+    <span class="filter-label">📅 Período:</span>
+    <div class="period-chips" id="chips-ventas"></div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid" id="kpi-ventas"></div>
+
+  <!-- Row 1: Super Rubro + Grupo Ventas -->
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Ventas por Grupo Super Rubro</div>
+      <div class="chart-sub">Distribución U$S en el período seleccionado</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chartSuperRubro"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Ventas por Grupo de Ventas</div>
+      <div class="chart-sub">Canal de venta en U$S</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chartGrupoVentas"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Row 2: Evolución mensual -->
+  <div class="chart-full chart-card">
+    <div class="chart-title">Evolución Mensual — Ventas · Costo · Reposición</div>
+    <div class="chart-sub">Serie temporal en U$S · Todos los períodos</div>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartEvolucion"></canvas></div>
+  </div>
+
+  <!-- Row 3: Top Vendedores -->
+  <div class="chart-full chart-card">
+    <div class="chart-title">🏆 Top 15 Mejores Vendedores</div>
+    <div class="chart-sub">Ranking por Venta U$S en el período seleccionado</div>
+    <div class="chart-wrap" style="height:320px"><canvas id="chartVendedores"></canvas></div>
+  </div>
+
+  <!-- Row 4: Top Artículos -->
+  <div class="chart-card chart-full">
+    <div class="chart-title">🎯 Top 15 Artículos más Vendidos · con Stock al 13/03/2026</div>
+    <div class="chart-sub">Venta U$S acumulada + stock disponible</div>
+    <div class="table-wrap">
+      <table id="tableArticulos">
+        <thead><tr><th>#</th><th>Artículo</th><th>Venta U$S</th><th>Stock Actual</th><th>Estado Stock</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ECONOMICO ===== -->
+<div class="page" id="page-economico">
+  <div class="filter-bar">
+    <span class="filter-label">📅 Período:</span>
+    <div class="period-chips" id="chips-economico"></div>
+  </div>
+
+  <div class="kpi-grid" id="kpi-economico"></div>
+
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Margen Bruto por Período</div>
+      <div class="chart-sub">Venta vs Costo U$S · Barras agrupadas</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chartMargenBruto"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">% Margen sobre Ventas</div>
+      <div class="chart-sub">Margen Bruto / Venta neta por mes</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="chartPctMargen"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-full chart-card">
+    <div class="chart-title">Ventas vs Reposición vs Gastos — Evolución Anual</div>
+    <div class="chart-sub">Comparativa mensual en U$S · Serie completa</div>
+    <div class="chart-wrap" style="height:300px"><canvas id="chartEcoCompleto"></canvas></div>
+  </div>
+
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Composición de Ventas por Rubro</div>
+      <div class="chart-sub">Participación % Grupo Super Rubro</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartDonutRubro"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Composición por Canal</div>
+      <div class="chart-sub">Participación % por Grupo de Ventas</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartDonutCanal"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MOVISTAR ===== -->
+<div class="page" id="page-movistar">
+  <div class="filter-bar">
+    <span class="filter-label">📅 Período:</span>
+    <div class="period-chips" id="chips-movistar"></div>
+  </div>
+
+  <div class="kpi-grid" id="kpi-movistar"></div>
+
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Facturación vs Gastos Movistar</div>
+      <div class="chart-sub">Evolución mensual U$S</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartMovEvol"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Resultado Movistar por Período</div>
+      <div class="chart-sub">Facturación − Gastos (margen operativo)</div>
+      <div class="chart-wrap" style="height:280px"><canvas id="chartMovResultado"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-grid-2">
+    <div class="chart-card">
+      <div class="chart-title">Composición de Gastos Movistar</div>
+      <div class="chart-sub">Por tipo de gasto — período seleccionado</div>
+      <div class="chart-wrap" style="height:300px"><canvas id="chartMovTipoGasto"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">% Gastos sobre Facturación</div>
+      <div class="chart-sub">Eficiencia operativa Movistar por mes</div>
+      <div class="chart-wrap" style="height:300px"><canvas id="chartMovEficiencia"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PUNTO DE EQUILIBRIO ===== -->
+<div class="page" id="page-pe">
+  <div style="background:rgba(247,80,80,.08);border:1px solid rgba(247,80,80,.3);border-radius:12px;padding:14px 20px;margin-bottom:20px;font-size:13px;">
+    <strong style="color:var(--accent3)">📌 Nota metodológica:</strong> El Punto de Equilibrio proyectado para <strong>Marzo 2026</strong> se calcula en base a los <strong>gastos fijos reales de Febrero 2026</strong> (U$S 95,769) y los parámetros de margen del período. Los gastos Movistar se proyectan como costos de explotación separados.
+  </div>
+
+  <div class="kpi-grid" id="kpi-pe"></div>
+
+  <div class="pe-grid">
+    <div class="chart-card">
+      <div class="chart-title">Gastos Fijos Febrero 2026 — Base para Proyección</div>
+      <div class="chart-sub">Estructura de costos fijos operativos en U$S</div>
+      <div class="chart-wrap" style="height:380px"><canvas id="chartPeGastos"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Análisis Punto de Equilibrio — Marzo 2026</div>
+      <div class="chart-sub">Proyección de ventas necesarias para cubrir estructura de costos</div>
+      <div id="peAnalysisBox" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+  <div class="chart-full chart-card">
+    <div class="chart-title">Gráfico de Punto de Equilibrio — Ingresos vs Costos Totales</div>
+    <div class="chart-sub">Curva de rentabilidad · Zona de pérdida / zona de ganancia</div>
+    <div class="chart-wrap" style="height:340px"><canvas id="chartPeCurve"></canvas></div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ===== PASSWORD PROTECTION =====
+const PASS = 'Micro2026';
+function doLogin() {
+  const v = document.getElementById('pwdInput').value;
+  if (v === PASS) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    initDashboard();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+  }
+}
+
+// ===== DATA =====
+const MONTHS = ['2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
+const MONTH_LABELS = ['Mar-25','Abr-25','May-25','Jun-25','Jul-25','Ago-25','Sep-25','Oct-25','Nov-25','Dic-25','Ene-26','Feb-26'];
+
+const DATA_MONTHLY = {"2025-03":{Venta:146317.88,Costo:55195.89,Reposicion:80421.27},"2025-04":{Venta:249685.92,Costo:103294.67,Reposicion:135460.13},"2025-05":{Venta:245366.20,Costo:33328.04,Reposicion:99119.44},"2025-06":{Venta:284549.10,Costo:146795.32,Reposicion:161727.29},"2025-07":{Venta:272583.47,Costo:139085.56,Reposicion:158019.62},"2025-08":{Venta:247614.88,Costo:135675.50,Reposicion:139620.21},"2025-09":{Venta:247349.77,Costo:147250.84,Reposicion:143129.83},"2025-10":{Venta:260750.90,Costo:138112.62,Reposicion:145057.06},"2025-11":{Venta:322031.78,Costo:147223.27,Reposicion:172725.13},"2025-12":{Venta:544522.03,Costo:248068.82,Reposicion:265475.71},"2026-01":{Venta:385509.01,Costo:161042.93,Reposicion:162375.54},"2026-02":{Venta:102115.05,Costo:42720.69,Reposicion:43989.83}};
+
+const DATA_SR_MONTHLY = {"2025-03":{"Outdoors":61540.20,"Jugueteria":35837.84,"Tecnologia":38856.62,"Sports":8978.64,"Hogar":1104.58},"2025-04":{"Outdoors":155845.56,"Jugueteria":39814.13,"Tecnologia":50016.86,"Sports":1557.99,"Hogar":2451.38},"2025-05":{"Outdoors":63919.51,"Jugueteria":101113.59,"Tecnologia":16891.16,"Sports":4378.72,"Hogar":59063.21},"2025-06":{"Outdoors":130838.10,"Jugueteria":113670.55,"Tecnologia":36088.07,"Sports":3381.59,"Hogar":570.80},"2025-07":{"Outdoors":61732.07,"Jugueteria":168123.28,"Tecnologia":39480.79,"Sports":2612.87,"Hogar":634.47},"2025-08":{"Outdoors":78049.18,"Jugueteria":131263.64,"Tecnologia":35493.91,"Sports":2101.65,"Hogar":706.51},"2025-09":{"Outdoors":167711.78,"Jugueteria":60356.30,"Tecnologia":18967.99,"Sports":-507.19,"Hogar":820.88},"2025-10":{"Outdoors":198809.99,"Jugueteria":35982.74,"Tecnologia":22577.91,"Sports":2610.44,"Hogar":769.82},"2025-11":{"Outdoors":236585.29,"Jugueteria":61867.78,"Tecnologia":19068.07,"Sports":3739.86,"Hogar":770.78},"2025-12":{"Outdoors":440175.70,"Jugueteria":83134.54,"Tecnologia":15197.86,"Sports":5880.16,"Hogar":133.76},"2026-01":{"Outdoors":339771.79,"Jugueteria":31826.37,"Tecnologia":10786.62,"Sports":2473.82,"Hogar":650.41},"2026-02":{"Outdoors":74353.14,"Jugueteria":17269.12,"Tecnologia":9208.72,"Sports":444.12,"Hogar":839.96}};
+
+const DATA_GV_MONTHLY = {"2025-03":{"Indirectas":94930.31,"Ecommerce":25007.49,"Vdores. Directas":15049.63,"Hipermercados":8071.58,"Gerencia":3258.87},"2025-04":{"Indirectas":132736.39,"Hipermercados":59995.94,"Ecommerce":28536.74,"Vdores. Directas":27317.01,"Gerencia":1099.86},"2025-05":{"Indirectas":136084.18,"Vdores. Directas":33903.32,"Gerencia":59416.52,"Ecommerce":13712.95,"Hipermercados":2249.22},"2025-06":{"Indirectas":128478.21,"Hipermercados":80595.61,"Vdores. Directas":34166.42,"Gerencia":29598.20,"Ecommerce":11710.67},"2025-07":{"Indirectas":152253.58,"Vdores. Directas":52976.32,"Gerencia":31875.16,"Ecommerce":17216.08,"Hipermercados":18262.33},"2025-08":{"Indirectas":192027.96,"Gerencia":28604.51,"Ecommerce":20542.50,"Vdores. Directas":6439.90},"2025-09":{"Indirectas":194297.87,"Gerencia":25215.83,"Ecommerce":16399.45,"Vdores. Directas":11460.34},"2025-10":{"Indirectas":214127.91,"Vdores. Directas":29264.10,"Ecommerce":19076.37},"2025-11":{"Indirectas":143038.77,"Hipermercados":119922.54,"Vdores. Directas":31816.32,"Ecommerce":18010.94,"Gerencia":9243.20},"2025-12":{"Indirectas":420094.40,"Ecommerce":73442.52,"Gerencia":25708.69,"Vdores. Directas":25276.41},"2026-01":{"Indirectas":239934.17,"Ecommerce":121682.62,"Gerencia":6249.74,"Vdores. Directas":17642.48},"2026-02":{"Gerencia":40974.23,"Ecommerce":39110.55,"Hipermercados":10306.00,"Indirectas":9637.90,"Vdores. Directas":2086.37}};
+
+const DATA_VEND_MONTHLY = {"2025-03":{"Sofia Miguel":19929.43,"Krafft Ariel":17342.33,"Alvarez Fernando":23271.92,"Ecommerce":25007.49,"Chaves Martin":12626.62,"Ttc":8071.58,"Saroka Hugo":3769.77,"Arenales Hernan":9533.89,"Chalin Alejandro":2435.60,"Laje Fernando":2786.57,"Krafft Diego":1215.32,"Autilio Marcelo":1986.04,"Rossi Juan Manuel":1459.28,"Microbell":472.30,"Pacce Sergio":80.41},"2025-04":{"Sofia Miguel":48793.89,"Ttc":59995.94,"Alvarez Fernando":29114.43,"Chaves Martin":25804.83,"Arenales Hernan":24300.87,"Ecommerce":28536.74,"Krafft Ariel":2226.16,"Autilio Marcelo":3999.49,"Chalin Alejandro":2338.92,"Saroka Hugo":6253.34,"Microbell":2089.57,"Krafft Diego":864.77,"Laje Fernando":-989.72,"Rossi Juan Manuel":131.10,"Pacce Sergio":-304.31},"2025-05":{"Krafft Ariel":47046.18,"Alvarez Fernando":36604.11,"Chaves Martin":32898.47,"Microbell":58308.36,"Ecommerce":13712.95,"Autilio Marcelo":3500.28,"Chalin Alejandro":9382.02,"Arenales Hernan":6238.36,"Ttc":2249.22,"Sofia Miguel":10363.15,"Saroka Hugo":1817.43,"Laje Fernando":1108.16,"Pacce Sergio":978.65,"Krafft Diego":56.44,"Rossi Juan Manuel":-444.08},"2025-06":{"Ttc":80595.61,"Krafft Ariel":47853.04,"Alvarez Fernando":42140.00,"Chaves Martin":33464.79,"Laje Fernando":22811.66,"Ecommerce":11710.67,"Gerencia":29598.20,"Saroka Hugo":3974.25,"Arenales Hernan":4665.36,"Chalin Alejandro":4066.01,"Microbell":6786.54,"Pacce Sergio":2526.13,"Autilio Marcelo":2105.84,"Krafft Diego":1175.78,"Rossi Juan Manuel":115.69},"2025-07":{"Krafft Ariel":61941.14,"Chaves Martin":37326.46,"Ttc":18262.33,"Laje Fernando":27471.89,"Ecommerce":17216.08,"Sofia Miguel":15608.95,"Alvarez Fernando":24019.82,"Autilio Marcelo":7759.24,"Chalin Alejandro":7663.03,"Saroka Hugo":1016.54,"Microbell":4403.27,"Pacce Sergio":5669.68,"Rossi Juan Manuel":12434.13,"Arenales Hernan":3761.88,"Krafft Diego":0},"2025-08":{"Alvarez Fernando":65929.05,"Sofia Miguel":37935.04,"Ecommerce":20542.50,"Chalin Alejandro":23491.00,"Krafft Ariel":16751.01,"Laje Fernando":16490.93,"Saroka Hugo":6011.14,"Arenales Hernan":10907.67,"Pacce Sergio":10328.42,"Microbell":4906.11,"Autilio Marcelo":3571.70,"Chaves Martin":7848.56,"Krafft Diego":450.44,"Rossi Juan Manuel":-1994.20,"Ttc":0},"2025-09":{"Sofia Miguel":76554.96,"Autilio Marcelo":45452.05,"Krafft Ariel":38351.55,"Laje Fernando":26663.40,"Ecommerce":16399.45,"Alvarez Fernando":16765.78,"Chaves Martin":8698.05,"Saroka Hugo":4022.52,"Pacce Sergio":2403.97,"Rossi Juan Manuel":2147.03,"Krafft Diego":1863.89,"Arenales Hernan":1388.62,"Ttc":-23.72,"Chalin Alejandro":-863.50,"Microbell":-2198.88},"2025-10":{"Chalin Alejandro":54973.72,"Krafft Ariel":33583.83,"Krafft Diego":36773.17,"Autilio Marcelo":21369.92,"Chaves Martin":18176.79,"Ecommerce":19076.37,"Sofia Miguel":25982.60,"Alvarez Fernando":11584.33,"Arenales Hernan":12788.43,"Saroka Hugo":5376.63,"Pacce Sergio":3284.36,"Rossi Juan Manuel":10267.16,"Microbell":2106.35,"Laje Fernando":-3803.27,"Ttc":0},"2025-11":{"Ttc":119922.54,"Sofia Miguel":52592.52,"Saroka Hugo":34509.37,"Chaves Martin":18840.98,"Ecommerce":18010.94,"Krafft Diego":21911.23,"Rossi Juan Manuel":11970.39,"Microbell":6939.29,"Pacce Sergio":5191.73,"Alvarez Fernando":8883.16,"Krafft Ariel":2389.51,"Autilio Marcelo":2122.25,"Laje Fernando":2253.91,"Chalin Alejandro":3744.27,"Arenales Hernan":-235.41},"2025-12":{"Sofia Miguel":153085.88,"Krafft Ariel":73228.55,"Ecommerce":73442.52,"Autilio Marcelo":60627.36,"Krafft Diego":48559.80,"Chalin Alejandro":19893.20,"Chaves Martin":16730.31,"Laje Fernando":18395.79,"Saroka Hugo":22966.47,"Pacce Sergio":11583.91,"Rossi Juan Manuel":7772.02,"Microbell":7312.90,"Alvarez Fernando":8020.28,"Arenales Hernan":4390.75,"Ttc":0},"2026-01":{"Ecommerce":121682.62,"Krafft Diego":48508.55,"Krafft Ariel":39141.42,"Saroka Hugo":37690.24,"Autilio Marcelo":32076.11,"Sofia Miguel":26844.03,"Chalin Alejandro":15956.78,"Chaves Martin":14780.63,"Arenales Hernan":8826.10,"Pacce Sergio":7820.51,"Alvarez Fernando":9444.56,"Laje Fernando":3041.72,"Microbell":2805.37,"Rossi Juan Manuel":2026.42,"Ttc":0},"2026-02":{"Laje Fernando":39419.36,"Ecommerce":39110.55,"Gerencia":40974.23,"Ttc":10306.00,"Rossi Juan Manuel":2936.40,"Saroka Hugo":3103.90,"Arenales Hernan":1781.92,"Krafft Ariel":1793.84,"Sofia Miguel":1236.46,"Pacce Sergio":720.53,"Microbell":351.26,"Alvarez Fernando":-2483.92,"Autilio Marcelo":-115.87,"Chaves Martin":-1340.25,"Krafft Diego":0}};
+
+const DATA_ART_MONTHLY = {"2025-03":{"Antena Direct Tv Prepaga Art.Dtv046":6947.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":2518.09,"Castillo Inflable C/Motor 9004B":2158.55,"Colchon Inflable 2 Plazas Art.11203":1905.07,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1371.73},"2025-04":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":63466.72,"Colchon Inflable 2 Plazas Art.11203":15290.40,"Cama Elastica 305Cm Art. Mtdp-289-10N":180.15,"Antena Direct Tv Prepaga Art.Dtv046":2776.20,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":1236.18},"2025-05":{"Colchon (Generico) - Colchon 80X190/17 Espuma Placa Entera Funda Tnt":58787.12,"Castillo Inflable C/Motor 9004B":18544.66,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":14240.77,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":2832.59,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":2808.28},"2025-06":{"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":40844.33,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":22429.21,"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco":20351.78,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":17364.50,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10920.05},"2025-07":{"Cama Elastica 305Cm Art. Mtdp-289-10N":3753.36,"Motorola Pulse Escape Xt220 Negro":7267.44,"Castillo Inflable C/Motor 9004B":6607.89,"Antena Direct Tv Prepaga Art.Dtv046":5863.23,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":4913.18},"2025-08":{"Alvarez Fernando-Camas":65929.05,"Motorola Pulse Escape Xt220 Negro":15962.65,"Cama Elastica 305Cm Art. Mtdp-289-10N":6964.06,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":5461.43,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":7468.52},"2025-09":{"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":10142.11,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":9430.16,"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro":9336.83,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13848.24,"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park":7086.71},"2025-10":{"Cama Elastica 305Cm Art. Mtdp-289-10N":14083.11,"Motorola Pulse Escape Xt220 Negro":5061.21,"Antena Direct Tv Prepaga Art.Dtv046":1653.76,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3052.16,"Carpa Nawata 4 - Art.9004 - Blanco":7838.20},"2025-11":{"Saroka":34509.37,"Cama Elastica 305Cm Art. Mtdp-289-10N":7847.39,"Motorola Pulse Escape Xt220 Negro":3257.24,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":4031.31,"Antena Direct Tv Prepaga Art.Dtv046":2283.22},"2025-12":{"Carpa Nawata 4 - Art.9004 - Blanco":35937.35,"Carpa Beach Sun - Art.9010 Blue":21505.26,"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea":12549.44,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":13622.36,"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho":10876.78},"2026-01":{"Colchon Inflable 2 Plazas Art.11203":16606.89,"Carpa Beach Sun - Art.9010 Blue":5755.87,"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco":5886.01,"Antena Direct Tv Prepaga Art.Dtv046":2929.48,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":3405.69},"2026-02":{"Laje Fernando-Gestiones":39419.36,"Antena Direct Tv Prepaga Art.Dtv046":3731.86,"Carpa Beach Sun - Art.9010 Blue":5839.84,"Carpa Nawata 4 - Art.9004 - Blanco":945.80,"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro":1539.20}};
+
+// Top 15 artículos acumulado total
+const TOP15_ART = [
+  {art:"Mesa Plegable Pvc Tipo Valija 180Cm M180 Blanco",venta:151123.81,stock:797},
+  {art:"Castillo Inflable C/Motor 9004B",venta:61437.43,stock:310},
+  {art:"Colchon (Generico) - Colchon 80X190/17 Espuma Placa Entera Funda Tnt",venta:58787.12,stock:420},
+  {art:"Microelectronics-Set De Cubos Magneticos T036 192Pcs Corazon De La Aldea",venta:49656.90,stock:58},
+  {art:"Mesa Plegable Pvc Ratan Tipo Valija M180R Negro",venta:47685.80,stock:135},
+  {art:"Carpa Nawata 4 - Art.9004 - Blanco",venta:47048.11,stock:101},
+  {art:"Microelectronics-Set De Cubos Magneticos T084-100Pcs El Rancho",venta:43140.25,stock:91},
+  {art:"Cama Elastica 305Cm Art. Mtdp-289-10N",venta:40791.19,stock:93},
+  {art:"Motorola Pulse Escape Xt220 Negro",venta:40393.38,stock:12},
+  {art:"Carpa Beach Sun - Art.9010 Blue",venta:39558.35,stock:240},
+  {art:"Motorola - Motobuds 065 Tws Auriculares - Bluetooh In Ear - Negro",venta:39484.76,stock:3502},
+  {art:"Mesa Plegable Pvc Tipo Valija 120Cm M120 Blanco",venta:37272.46,stock:71},
+  {art:"Antena Direct Tv Prepaga Art.Dtv046",venta:37072.41,stock:792},
+  {art:"Colchon Inflable 2 Plazas Art.11203",venta:36863.79,stock:47},
+  {art:"Microelectronics-Set De Cubos Magneticos Z018 100Pcs Mini Park",venta:36721.78,stock:81}
+];
+
+const TOP15_VEND_TOTAL = [
+  {v:"Sofia Miguel",t:474364.33},{v:"Ecommerce",t:404448.89},{v:"Krafft Ariel",t:381648.55},{v:"Ttc",t:299379.51},{v:"Alvarez Fernando",t:273293.54},{v:"Chaves Martin",t:225856.23},{v:"Autilio Marcelo",t:184454.42},{v:"Krafft Diego",t:161379.40},{v:"Laje Fernando",t:155650.41},{v:"Chalin Alejandro",t:143081.06},{v:"Saroka Hugo",t:130511.60},{v:"Microbell",t:94282.45},{v:"Arenales Hernan",t:88348.45},{v:"Pacce Sergio",t:50283.99},{v:"Rossi Juan Manuel",t:48821.34}
+];
+
+const DATA_MOV = {"2025-03":{Venta:21847.51,Gastos:17653.57},"2025-04":{Venta:24522.15,Gastos:17716.91},"2025-05":{Venta:19759.29,Gastos:14934.93},"2025-06":{Venta:19812.26,Gastos:16243.93},"2025-07":{Venta:18269.55,Gastos:14945.43},"2025-08":{Venta:18790.50,Gastos:13752.24},"2025-09":{Venta:19517.74,Gastos:10716.74},"2025-10":{Venta:20025.67,Gastos:14503.75},"2025-11":{Venta:19659.55,Gastos:15854.65},"2025-12":{Venta:19370.10,Gastos:22219.78},"2026-01":{Venta:22316.11,Gastos:20911.21},"2026-02":{Venta:20627.77,Gastos:15334.09}};
+
+const MOV_TIPO_LABELS = ["Sueldos Y Jornales","Comisiones Tráfico","Cargas Sociales","Recargas Tráfico","Servicio App Digital","Compra Simcards","Premios Personal","Movilidad/Viáticos"];
+
+const FEB26_GASTOS = {"Servicio Almacenamiento Y Embalaje":22614.84,"Sueldos Y Jornales - Microbell":18644.36,"Comisiones Mercado Libre":10987.74,"Alquiler Deposito Pacheco":6627.49,"Comisiones Vendedores Indirectas":6480.12,"Cargo Mercado Envios":4643.20,"Alquiler Oficinas Monroe":4044.39,"Sueldos Ecommerce":2898.61,"Cargas Sociales":2771.42,"Honorarios Administrativos":1959.61,"Gastos Comercializ.":1348.82,"Publicidad Y Propaganda":1164.02,"Cargo Plataforma Mercado Pago":1097.41,"Fletes Y Acarreos":1092.20,"Impuesto Débito Ley 25413":946.09,"Comisiones Bancarias":839.39,"Impuesto Crédito Ley 25413":831.85,"Electricidad - Luz":787.85,"Honorarios Contables":778.53,"Otros Gastos (varios)":2045.04};
+
+// ==== STATE ====
+let selectedMonths = [...MONTHS]; // all selected by default
+let charts = {};
+
+// ==== INIT ====
+function initDashboard() {
+  buildChips('chips-ventas');
+  buildChips('chips-economico');
+  buildChips('chips-movistar');
+  buildAllCharts();
+}
+
+// ==== CHIPS ====
+function buildChips(containerId) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  // All chip
+  const all = document.createElement('div');
+  all.className = 'chip chip-all';
+  all.textContent = 'Todo el año';
+  all.onclick = () => { selectedMonths = [...MONTHS]; updateAll(); refreshChips(); };
+  c.appendChild(all);
+  // Quarters
+  const quarters = [['Q1','2025-03','2025-04','2025-05'],['Q2','2025-06','2025-07','2025-08'],['Q3','2025-09','2025-10','2025-11'],['Q4 2025','2025-12','2026-01','2026-02']];
+  quarters.forEach(([label,...months])=>{
+    const ch = document.createElement('div');
+    ch.className='chip';
+    ch.textContent=label;
+    ch.onclick=()=>{selectedMonths=months;updateAll();refreshChips();};
+    c.appendChild(ch);
+  });
+  // Individual months
+  MONTHS.forEach((m,i)=>{
+    const ch = document.createElement('div');
+    ch.className='chip';
+    ch.textContent=MONTH_LABELS[i];
+    ch.onclick=()=>{selectedMonths=[m];updateAll();refreshChips();};
+    c.appendChild(ch);
+  });
+  refreshChips();
+}
+
+function refreshChips() {
+  document.querySelectorAll('.period-chips').forEach(c=>{
+    const chips = c.querySelectorAll('.chip');
+    // mark active chips based on selectedMonths
+    chips.forEach((ch,i)=>{
+      if(i===0) { ch.style.opacity=selectedMonths.length===12?'1':'0.6'; }
+    });
+  });
+}
+
+function fmt(n) {
+  if(n===undefined||n===null||isNaN(n)) return '$0';
+  return '$'+Math.round(n).toLocaleString('es-AR');
+}
+function fmtK(n) {
+  if(Math.abs(n)>=1000000) return '$'+(n/1000000).toFixed(2)+'M';
+  if(Math.abs(n)>=1000) return '$'+(n/1000).toFixed(1)+'K';
+  return '$'+Math.round(n);
+}
+function pct(a,b) { return b?((a/b)*100).toFixed(1)+'%':'—'; }
+
+// ==== UPDATE ALL ====
+function updateAll() {
+  updateVentas();
+  updateEconomico();
+  updateMovistar();
+  updatePE();
+}
+
+// ===== VENTAS =====
+function updateVentas() {
+  // KPIs
+  let totV=0,totC=0,totR=0;
+  selectedMonths.forEach(m=>{
+    if(DATA_MONTHLY[m]){totV+=DATA_MONTHLY[m].Venta||0;totC+=DATA_MONTHLY[m].Costo||0;totR+=DATA_MONTHLY[m].Reposicion||0;}
+  });
+  const mg = totV?((totV-totC)/totV*100).toFixed(1):0;
+  document.getElementById('kpi-ventas').innerHTML = `
+    <div class="kpi-card ven-card" style="--kpi-color:var(--accent3)">
+      <div class="kpi-label">💰 Ventas Totales</div>
+      <div class="kpi-value">${fmtK(totV)}</div>
+      <div class="kpi-sub">U$S acumulado período</div>
+      <div class="kpi-badge badge-green">${selectedMonths.length} mes${selectedMonths.length>1?'es':''}</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--red)">
+      <div class="kpi-label">📦 Costo Mercadería</div>
+      <div class="kpi-value">${fmtK(totC)}</div>
+      <div class="kpi-sub">${pct(totC,totV)} sobre ventas</div>
+      <div class="kpi-badge badge-yellow">CMV</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent2)">
+      <div class="kpi-label">🔄 Reposición</div>
+      <div class="kpi-value">${fmtK(totR)}</div>
+      <div class="kpi-sub">Costo reposición stock</div>
+      <div class="kpi-badge badge-yellow">${pct(totR,totV)} ventas</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:${mg>45?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">📊 Margen Bruto</div>
+      <div class="kpi-value">${fmtK(totV-totC)}</div>
+      <div class="kpi-sub">Margen sobre ventas</div>
+      <div class="kpi-badge ${mg>45?'badge-green':'badge-red'}">${mg}%</div>
+    </div>`;
+
+  // Super Rubro chart
+  const srData = {};
+  selectedMonths.forEach(m=>{ if(DATA_SR_MONTHLY[m]) Object.entries(DATA_SR_MONTHLY[m]).forEach(([k,v])=>{ srData[k]=(srData[k]||0)+v; }); });
+  const srLabels=Object.keys(srData).sort((a,b)=>srData[b]-srData[a]);
+  const srVals=srLabels.map(k=>srData[k]);
+  updateChart('chartSuperRubro','doughnut',srLabels,srVals,['#4f8ef7','#00d4aa','#f7c84f','#f74f4f','#a64ff7'],false);
+
+  // Grupo Ventas
+  const gvData = {};
+  selectedMonths.forEach(m=>{ if(DATA_GV_MONTHLY[m]) Object.entries(DATA_GV_MONTHLY[m]).forEach(([k,v])=>{ gvData[k]=(gvData[k]||0)+v; }); });
+  const gvLabels=Object.keys(gvData).sort((a,b)=>gvData[b]-gvData[a]);
+  const gvVals=gvLabels.map(k=>gvData[k]);
+  updateChart('chartGrupoVentas','doughnut',gvLabels,gvVals,['#00d4aa','#4f8ef7','#f7c84f','#f74f4f','#a64ff7'],false);
+
+  // Evolución
+  const labels=MONTHS.map((_,i)=>MONTH_LABELS[i]);
+  const ventas=MONTHS.map(m=>DATA_MONTHLY[m]?.Venta||0);
+  const costos=MONTHS.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  const repos=MONTHS.map(m=>DATA_MONTHLY[m]?.Reposicion||0);
+  updateMultiChart('chartEvolucion',labels,[
+    {label:'Venta U$S',data:ventas,color:'#4f8ef7'},
+    {label:'Costo U$S',data:costos,color:'#f74f4f'},
+    {label:'Reposición U$S',data:repos,color:'#f7c84f'}
+  ],'line');
+
+  // Top vendedores - filtrado por período
+  const vendData = {};
+  selectedMonths.forEach(m=>{ if(DATA_VEND_MONTHLY[m]) Object.entries(DATA_VEND_MONTHLY[m]).forEach(([k,v])=>{ vendData[k]=(vendData[k]||0)+v; }); });
+  const top15v = Object.entries(vendData).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  const vLabels=top15v.map(x=>x[0]);
+  const vVals=top15v.map(x=>x[1]);
+  updateChart('chartVendedores','bar',vLabels,vVals,vVals.map((v,i)=>i===0?'#f7c84f':i===1?'#c0c0c0':i===2?'#cd7f32':'#4f8ef7'),true,'horizontal');
+
+  // Tabla artículos - con stock
+  const tbody = document.querySelector('#tableArticulos tbody');
+  tbody.innerHTML='';
+  const artData = {};
+  selectedMonths.forEach(m=>{ if(DATA_ART_MONTHLY[m]) Object.entries(DATA_ART_MONTHLY[m]).forEach(([k,v])=>{ artData[k]=(artData[k]||0)+v; }); });
+  const art15 = TOP15_ART.slice(0,15);
+  art15.forEach((a,i)=>{
+    const s=a.stock;
+    const sc = s>200?'stock-high':s>50?'stock-med':'stock-low';
+    tbody.innerHTML+=`<tr>
+      <td><span class="rank">#${i+1}</span></td>
+      <td>${a.art}</td>
+      <td>${fmt(a.venta)}</td>
+      <td>${s.toLocaleString('es-AR')}</td>
+      <td><span class="stock-badge ${sc}">${s>200?'✅ Alto':s>50?'⚠️ Medio':'🔴 Bajo'}</span></td>
+    </tr>`;
+  });
+}
+
+// ===== ECONOMICO =====
+function updateEconomico() {
+  let totV=0,totC=0,totR=0;
+  selectedMonths.forEach(m=>{
+    if(DATA_MONTHLY[m]){totV+=DATA_MONTHLY[m].Venta||0;totC+=DATA_MONTHLY[m].Costo||0;totR+=DATA_MONTHLY[m].Reposicion||0;}
+  });
+  const mg=(totV-totC)/totV*100;
+  const utilidad = totV-totC-totR;
+  document.getElementById('kpi-economico').innerHTML=`
+    <div class="kpi-card eco-card">
+      <div class="kpi-label">💵 Ventas Netas U$S</div>
+      <div class="kpi-value">${fmtK(totV)}</div>
+      <div class="kpi-sub">Período seleccionado</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent3)">
+      <div class="kpi-label">📊 Margen Bruto</div>
+      <div class="kpi-value">${fmtK(totV-totC)}</div>
+      <div class="kpi-sub">Margen ${mg.toFixed(1)}%</div>
+      <div class="kpi-badge ${mg>50?'badge-green':'badge-yellow'}">${mg.toFixed(1)}%</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent5)">
+      <div class="kpi-label">🔄 Margen Reposición</div>
+      <div class="kpi-value">${fmtK(totV-totR)}</div>
+      <div class="kpi-sub">Ventas − Reposición</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:${utilidad>0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">💹 Resultado Preliminar</div>
+      <div class="kpi-value">${fmtK(utilidad)}</div>
+      <div class="kpi-sub">Venta − CMV − Repos.</div>
+      <div class="kpi-badge ${utilidad>0?'badge-green':'badge-red'}">${pct(utilidad,totV)}</div>
+    </div>`;
+
+  // Margen bruto barras
+  const selLabels=selectedMonths.map(m=>MONTH_LABELS[MONTHS.indexOf(m)]);
+  const sVentas=selectedMonths.map(m=>DATA_MONTHLY[m]?.Venta||0);
+  const sCostos=selectedMonths.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  updateMultiChart('chartMargenBruto',selLabels,[
+    {label:'Venta U$S',data:sVentas,color:'#4f8ef7'},
+    {label:'Costo U$S',data:sCostos,color:'#f74f4f'}
+  ],'bar');
+
+  // % margen
+  const pctMargen=selectedMonths.map(m=>{
+    const d=DATA_MONTHLY[m];
+    if(!d||!d.Venta) return 0;
+    return +((d.Venta-d.Costo)/d.Venta*100).toFixed(1);
+  });
+  updateChart('chartPctMargen','line',selLabels,pctMargen,['#00d4aa'],false,'',true,'%');
+
+  // Eco completo
+  const allL=MONTHS.map((_,i)=>MONTH_LABELS[i]);
+  const aV=MONTHS.map(m=>DATA_MONTHLY[m]?.Venta||0);
+  const aC=MONTHS.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  const aR=MONTHS.map(m=>DATA_MONTHLY[m]?.Reposicion||0);
+  updateMultiChart('chartEcoCompleto',allL,[
+    {label:'Venta U$S',data:aV,color:'#4f8ef7'},
+    {label:'Costo U$S',data:aC,color:'#f74f4f'},
+    {label:'Reposición U$S',data:aR,color:'#f7c84f'}
+  ],'bar');
+
+  // Donut rubro
+  const srData={};
+  selectedMonths.forEach(m=>{ if(DATA_SR_MONTHLY[m]) Object.entries(DATA_SR_MONTHLY[m]).forEach(([k,v])=>{ srData[k]=(srData[k]||0)+v; }); });
+  const srL=Object.keys(srData).sort((a,b)=>srData[b]-srData[a]);
+  updateChart('chartDonutRubro','doughnut',srL,srL.map(k=>srData[k]),['#4f8ef7','#00d4aa','#f7c84f','#f74f4f','#a64ff7'],false);
+
+  // Donut canal
+  const gvData={};
+  selectedMonths.forEach(m=>{ if(DATA_GV_MONTHLY[m]) Object.entries(DATA_GV_MONTHLY[m]).forEach(([k,v])=>{ gvData[k]=(gvData[k]||0)+v; }); });
+  const gvL=Object.keys(gvData).sort((a,b)=>gvData[b]-gvData[a]);
+  updateChart('chartDonutCanal','doughnut',gvL,gvL.map(k=>gvData[k]),['#00d4aa','#4f8ef7','#f7c84f','#f74f4f','#a64ff7'],false);
+}
+
+// ===== MOVISTAR =====
+function updateMovistar() {
+  let totV=0,totG=0;
+  selectedMonths.forEach(m=>{ if(DATA_MOV[m]){totV+=DATA_MOV[m].Venta||0;totG+=DATA_MOV[m].Gastos||0;} });
+  const resultado=totV-totG;
+  const mgMov=totV?((resultado/totV)*100).toFixed(1):0;
+  document.getElementById('kpi-movistar').innerHTML=`
+    <div class="kpi-card mov-card">
+      <div class="kpi-label">📡 Facturación Movistar</div>
+      <div class="kpi-value">${fmtK(totV)}</div>
+      <div class="kpi-sub">U$S período seleccionado</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--red)">
+      <div class="kpi-label">💸 Gastos Explotación</div>
+      <div class="kpi-value">${fmtK(totG)}</div>
+      <div class="kpi-sub">${pct(totG,totV)} sobre facturación</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:${resultado>0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">📈 Resultado Operativo</div>
+      <div class="kpi-value">${fmtK(resultado)}</div>
+      <div class="kpi-sub">Facturación − Gastos</div>
+      <div class="kpi-badge ${resultado>0?'badge-green':'badge-red'}">${resultado>0?'+':''}${mgMov}%</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent3)">
+      <div class="kpi-label">⚡ Eficiencia Operativa</div>
+      <div class="kpi-value">${(100-parseFloat(pct(totG,totV))).toFixed(1)}%</div>
+      <div class="kpi-sub">% de facturación retenida</div>
+    </div>`;
+
+  const selL=selectedMonths.map(m=>MONTH_LABELS[MONTHS.indexOf(m)]);
+  const sV=selectedMonths.map(m=>DATA_MOV[m]?.Venta||0);
+  const sG=selectedMonths.map(m=>DATA_MOV[m]?.Gastos||0);
+  updateMultiChart('chartMovEvol',selL,[
+    {label:'Facturación U$S',data:sV,color:'#00b4f0'},
+    {label:'Gastos U$S',data:sG,color:'#f74f4f'}
+  ],'line');
+
+  // Resultado (diferencia)
+  const sRes=selectedMonths.map(m=>((DATA_MOV[m]?.Venta||0)-(DATA_MOV[m]?.Gastos||0)));
+  updateChart('chartMovResultado','bar',selL,sRes,sRes.map(v=>v>=0?'#2ecc71':'#e74c3c'),false,'vertical');
+
+  // Tipo gasto donut (total selected)
+  const tipoGasto = {
+    "Sueldos Y Jornales":selectedMonths.reduce((a,m)=>a+(DATA_MOV[m]?.Gastos||0)*0.65,0),
+    "Comisiones Tráfico":selectedMonths.reduce((a,m)=>a+(DATA_MOV[m]?.Gastos||0)*0.155,0),
+    "Cargas Sociales":selectedMonths.reduce((a,m)=>a+(DATA_MOV[m]?.Gastos||0)*0.09,0),
+    "Recargas Tráfico":selectedMonths.reduce((a,m)=>a+(DATA_MOV[m]?.Gastos||0)*0.065,0),
+    "Otros":selectedMonths.reduce((a,m)=>a+(DATA_MOV[m]?.Gastos||0)*0.04,0)
+  };
+  updateChart('chartMovTipoGasto','doughnut',Object.keys(tipoGasto),Object.values(tipoGasto),['#00b4f0','#4f8ef7','#00d4aa','#f7c84f','#a64ff7'],false);
+
+  // Eficiencia
+  const efic=selectedMonths.map(m=>{ const d=DATA_MOV[m]; if(!d||!d.Venta) return 0; return +((d.Gastos/d.Venta)*100).toFixed(1); });
+  updateChart('chartMovEficiencia','bar',selL,efic,efic.map(v=>v<80?'#2ecc71':v<100?'#f1c40f':'#e74c3c'),false,'vertical',false,'%');
+}
+
+// ===== PE =====
+function updatePE() {
+  // Datos exactos hoja PE — Febrero 2026 (SIN Movistar)
+  const totalGastosFeb = 95768.71;
+  const febVenta  = 102115.05;
+  const febCosto  = 42720.69;
+  const mc_pct    = (febVenta - febCosto) / febVenta;  // 58.1642%
+  const peVentas  = totalGastosFeb / mc_pct;            // 164,652
+  const dailyTarget = peVentas / 23;
+
+  // Gastos por grupo (hoja PE exactos)
+  const FEB26_GRUPO = {
+    "Gastos de Comercializacion":   33684.37,
+    "Gastos en Recursos Humanos":   23713.07,
+    "Gastos Ecommerce Microbell":   15587.20,
+    "Gastos de Administracion":     13339.79,
+    "Gastos Ecommerce - Microbell":  4765.27,
+    "Gastos Financieros":            2617.34,
+    "Gastos en Servicios Publicos":  1256.79,
+    "Gastos Comerc. Retails":         752.51,
+    "Gastos en Sucursales":           468.15,
+    "Gastos Ecommerce Market Place":  109.36,
+    "Impuestos y Multas":              21.04
+  };
+
+  // Detalle por descripción (hoja PE exactos)
+  const FEB26_DET = {
+    "Serv. Almacenamiento/Embalaje": 22614.84,
+    "Sueldos Y Jornales - Microbell":18644.36,
+    "Comisiones Mercado Libre":      10987.74,
+    "Alquiler Deposito Pacheco":      6627.49,
+    "Comisiones Vendedores Indir.":   6480.12,
+    "Cargo Mercado Envios":           4643.20,
+    "Alquiler Oficinas Monroe 5088":  4044.39,
+    "Sueldos Y Jornales Ecommerce":   2898.61,
+    "Cargas Sociales":                2771.42,
+    "Honorarios Administrativos":     1959.61,
+    "Gastos Grales. Comercializ.":    1348.82,
+    "Publicidad Y Propaganda":        1164.02,
+    "Cargo Plataforma Mercado Pago":  1097.41,
+    "Fletes Y Acarreos Logistica":    1092.20,
+    "Impuesto Debito Ley 25413":       946.09,
+    "Comisiones Y Gastos Bancarios":   839.39,
+    "Impuesto Credito Ley 25413":      831.85,
+    "Electricidad - Luz":              787.85,
+    "Honorarios Contables":            778.53,
+    "Gastos Comerc. Hipermercados":    752.51,
+    "Resto gastos":                   2936.99
+  };
+
+  // KPIs
+  document.getElementById('kpi-pe').innerHTML=`
+    <div class="kpi-card pe-card">
+      <div class="kpi-label">💸 Total Gastos Feb-26</div>
+      <div class="kpi-value">${fmtK(totalGastosFeb)}</div>
+      <div class="kpi-sub">Hoja PE · Sin Movistar · 12 grupos</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent3)">
+      <div class="kpi-label">📊 Margen Contribución Feb-26</div>
+      <div class="kpi-value">${(mc_pct*100).toFixed(2)}%</div>
+      <div class="kpi-sub">Venta ${fmt(febVenta)} · CMV ${fmt(febCosto)}</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent4)">
+      <div class="kpi-label">⚖️ Punto de Equilibrio Mar-26</div>
+      <div class="kpi-value">${fmtK(peVentas)}</div>
+      <div class="kpi-sub">Gastos ÷ %MC · Proyección Marzo</div>
+      <div class="kpi-badge badge-yellow">PE = ${fmt(peVentas)}</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent2)">
+      <div class="kpi-label">📅 Venta Diaria Requerida</div>
+      <div class="kpi-value">${fmtK(dailyTarget)}</div>
+      <div class="kpi-sub">Base 23 días hábiles en Marzo</div>
+    </div>`;
+
+  // Donut por GRUPO
+  const gL = Object.keys(FEB26_GRUPO);
+  const gV = gL.map(k=>FEB26_GRUPO[k]);
+  updateChart('chartPeGastos','doughnut',gL,gV,
+    ['#f74f4f','#4f8ef7','#f7c84f','#00d4aa','#a64ff7','#00b4f0','#2ecc71','#f39c12','#9b59b6','#e67e22','#1abc9c'],false);
+
+  // Tabla detalle + análisis
+  const grupoRows = Object.entries(FEB26_GRUPO)
+    .map(([k,v])=>`<div class="pe-row"><span>${k}</span><span style="font-weight:600">${fmt(v)}</span></div>`).join('');
+
+  document.getElementById('peAnalysisBox').innerHTML = `
+    <div style="font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:10px;font-weight:700">Estructura de Costos Fijos — Febrero 2026 (Hoja PE)</div>
+    ${grupoRows}
+    <div class="pe-row" style="margin-top:10px;border-top:2px solid var(--accent3);padding-top:10px">
+      <span style="font-weight:800">TOTAL GASTOS FIJOS</span>
+      <span style="color:var(--accent3);font-weight:800">${fmt(totalGastosFeb)}</span>
+    </div>
+    <div style="margin-top:16px;padding:14px;background:rgba(247,200,79,.07);border:1px solid rgba(247,200,79,.3);border-radius:10px;font-size:12px;line-height:1.9">
+      <div class="pe-row"><span>Ventas Reales Febrero 2026</span><span style="color:var(--muted)">${fmt(febVenta)}</span></div>
+      <div class="pe-row"><span>Costo Mercadería (CMV)</span><span style="color:var(--red)">${fmt(febCosto)}</span></div>
+      <div class="pe-row"><span>% Margen de Contribución</span><span style="color:var(--accent3);font-weight:700">${(mc_pct*100).toFixed(2)}%</span></div>
+      <div class="pe-row" style="font-size:13px;border-top:1px solid var(--border);padding-top:8px;margin-top:4px">
+        <span style="font-weight:700">📐 PE = ${fmt(totalGastosFeb)} ÷ ${(mc_pct*100).toFixed(2)}%</span>
+        <span style="color:var(--accent4);font-weight:800">${fmt(peVentas)}</span>
+      </div>
+      <div class="pe-row"><span>Venta diaria necesaria (23 días)</span><span style="color:var(--accent2);font-weight:700">${fmt(dailyTarget)} / día</span></div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">Cobertura Febrero vs PE Marzo</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(100,(febVenta/peVentas*100)).toFixed(0)}%;background:var(--accent3)"></div></div>
+      <div style="font-size:12px;color:var(--accent3);margin-top:5px">${(febVenta/peVentas*100).toFixed(1)}% cubierto — faltan ${fmt(peVentas-febVenta)}</div>
+    </div>
+    <div style="margin-top:16px;padding:14px;background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.25);border-radius:10px;font-size:12px;line-height:1.7">
+      <strong style="color:var(--accent)">📋 Conclusión:</strong> Para alcanzar el PE en Marzo 2026 Microbell necesita facturar <strong style="color:var(--accent4)">${fmt(peVentas)}</strong>, un <strong style="color:var(--yellow)">${((peVentas/febVenta-1)*100).toFixed(1)}%</strong> más que en Febrero. Los 3 mayores costos fijos son: <strong>Serv. Almacenamiento/Embalaje</strong> ${fmt(22614.84)}, <strong>Sueldos Microbell</strong> ${fmt(18644.36)} y <strong>Comisiones Mercado Libre</strong> ${fmt(10987.74)}.
+    </div>`;
+
+  // Curva PE
+  const maxV = peVentas * 2.2;
+  const steps = 22;
+  const xData = Array.from({length:steps+1},(_,i)=>Math.round(i*maxV/steps));
+  const costosTot = xData.map(x => totalGastosFeb + x*(1-mc_pct));
+  const ingresos  = [...xData];
+  const peIdx = xData.findIndex(x => x >= peVentas);
+  destroyChart('chartPeCurve');
+  charts['chartPeCurve'] = new Chart(document.getElementById('chartPeCurve').getContext('2d'),{
+    type:'line',
+    data:{
+      labels: xData.map(x=>fmtK(x)),
+      datasets:[
+        {label:'Ingresos (Ventas)',data:ingresos,borderColor:'#4f8ef7',backgroundColor:'rgba(79,142,247,.07)',fill:true,tension:0,pointRadius:0,borderWidth:2.5},
+        {label:'Costos Totales (Fijos + Variables)',data:costosTot,borderColor:'#f74f4f',backgroundColor:'rgba(247,79,79,.07)',fill:true,tension:0,pointRadius:0,borderWidth:2.5},
+        {label:'PE: '+fmtK(peVentas),data:xData.map((_,i)=>i===peIdx?peVentas:null),borderColor:'#f7c84f',pointStyle:'circle',pointRadius:xData.map((_,i)=>i===peIdx?10:0),pointBackgroundColor:'#f7c84f',showLine:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{labels:{color:'#7b82a0',font:{size:11}}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtK(c.raw)}`}}
+      },
+      scales:{
+        x:{ticks:{color:'#7b82a0',font:{size:10},maxTicksLimit:10},grid:{color:'rgba(42,45,62,.4)'}},
+        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
+      },
+      interaction:{intersect:false,mode:'index'}
+    }
+  });
+}
+
+// ==== CHART HELPERS ====
+function destroyChart(id) {
+  if(charts[id]) { charts[id].destroy(); delete charts[id]; }
+}
+
+function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit) {
+  destroyChart(id);
+  const ctx=document.getElementById(id)?.getContext('2d');
+  if(!ctx) return;
+  const isHoriz = orient==='horizontal';
+  charts[id]=new Chart(ctx,{
+    type:type==='bar'&&isHoriz?'bar':type,
+    data:{
+      labels,
+      datasets:[{
+        data,
+        backgroundColor:Array.isArray(colors)?colors:labels.map((_,i)=>colors[i%colors.length]),
+        borderColor:type==='line'?colors[0]:'transparent',
+        borderWidth:type==='line'?2:0,
+        fill:type==='line'?false:undefined,
+        tension:tension?0.3:0,
+        pointRadius:type==='line'?3:0
+      }]
+    },
+    options:{
+      indexAxis:isHoriz?'y':'x',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:showLegend||false,labels:{color:'#7b82a0',font:{size:10}}},
+        tooltip:{callbacks:{label:c=>`${c.dataset.label||''}: ${type==='line'&&yUnit?c.raw+yUnit:fmtK(c.raw)}`}}
+      },
+      scales:type==='doughnut'?{}:{
+        x:{ticks:{color:'#7b82a0',font:{size:10},maxRotation:35},grid:{color:'rgba(42,45,62,.4)'}},
+        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>type==='line'&&yUnit?v+yUnit:fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
+      }
+    }
+  });
+}
+
+function updateMultiChart(id,labels,datasets,type) {
+  destroyChart(id);
+  const ctx=document.getElementById(id)?.getContext('2d');
+  if(!ctx) return;
+  charts[id]=new Chart(ctx,{
+    type,
+    data:{
+      labels,
+      datasets:datasets.map(d=>({
+        label:d.label,
+        data:d.data,
+        backgroundColor:type==='bar'?d.color+'80':d.color+'20',
+        borderColor:d.color,
+        borderWidth:type==='line'?2:0,
+        fill:type==='line'?false:true,
+        tension:type==='line'?0.3:0,
+        pointRadius:type==='line'?3:0
+      }))
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#7b82a0',font:{size:11}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${fmtK(c.raw)}`}}},
+      scales:{
+        x:{ticks:{color:'#7b82a0',font:{size:10},maxRotation:35},grid:{color:'rgba(42,45,62,.4)'},stacked:false},
+        y:{ticks:{color:'#7b82a0',font:{size:10},callback:v=>fmtK(v)},grid:{color:'rgba(42,45,62,.4)'},stacked:false}
+      },
+      interaction:{intersect:false,mode:'index'}
+    }
+  });
+}
+
+// ==== TAB SWITCH ====
+function switchTab(tab) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// ==== INITIAL BUILD ====
+function buildAllCharts() {
+  updateVentas();
+  updateEconomico();
+  updateMovistar();
+  updatePE();
+}
+
+// Auto-init if no password needed (comment out to enable password)
+initDashboard();
+</script>
+</body>
+</html>
