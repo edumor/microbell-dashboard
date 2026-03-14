@@ -428,7 +428,20 @@ function doLogin() {
 const MONTHS = ['2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12','2026-01','2026-02'];
 const MONTH_LABELS = ['Mar-25','Abr-25','May-25','Jun-25','Jul-25','Ago-25','Sep-25','Oct-25','Nov-25','Dic-25','Ene-26','Feb-26'];
 
-const DATA_MONTHLY = {"2025-03":{Venta:146317.88,Costo:55195.89,Reposicion:80421.27},"2025-04":{Venta:249685.92,Costo:103294.67,Reposicion:135460.13},"2025-05":{Venta:245366.20,Costo:33328.04,Reposicion:99119.44},"2025-06":{Venta:284549.10,Costo:146795.32,Reposicion:161727.29},"2025-07":{Venta:272583.47,Costo:139085.56,Reposicion:158019.62},"2025-08":{Venta:247614.88,Costo:135675.50,Reposicion:139620.21},"2025-09":{Venta:247349.77,Costo:147250.84,Reposicion:143129.83},"2025-10":{Venta:260750.90,Costo:138112.62,Reposicion:145057.06},"2025-11":{Venta:322031.78,Costo:147223.27,Reposicion:172725.13},"2025-12":{Venta:544522.03,Costo:248068.82,Reposicion:265475.71},"2026-01":{Venta:385509.01,Costo:161042.93,Reposicion:162375.54},"2026-02":{Venta:102115.05,Costo:42720.69,Reposicion:43989.83}};
+const DATA_MONTHLY = {
+  "2025-03":{Venta:146317.88, Costo:55195.89,  Reposicion:80421.27,  Gastos:129892.85},
+  "2025-04":{Venta:249685.92, Costo:103294.67, Reposicion:135460.13, Gastos:158390.11},
+  "2025-05":{Venta:245366.20, Costo:33328.04,  Reposicion:99119.44,  Gastos:133795.22},
+  "2025-06":{Venta:284549.10, Costo:146795.32, Reposicion:161727.29, Gastos:178968.48},
+  "2025-07":{Venta:272583.47, Costo:139085.56, Reposicion:158019.62, Gastos:156727.51},
+  "2025-08":{Venta:247614.88, Costo:135675.50, Reposicion:139620.21, Gastos:134586.29},
+  "2025-09":{Venta:247349.77, Costo:147250.84, Reposicion:143129.83, Gastos:207655.97},
+  "2025-10":{Venta:260750.90, Costo:138112.62, Reposicion:145057.06, Gastos:125127.74},
+  "2025-11":{Venta:322031.78, Costo:147223.27, Reposicion:172725.13, Gastos:128444.81},
+  "2025-12":{Venta:544522.03, Costo:248068.82, Reposicion:265475.71, Gastos:182232.43},
+  "2026-01":{Venta:385509.01, Costo:161042.93, Reposicion:162375.54, Gastos:211979.31},
+  "2026-02":{Venta:102115.05, Costo:42720.69,  Reposicion:43989.83,  Gastos:111102.80}
+};
 
 const DATA_SR_MONTHLY = {"2025-03":{"Outdoors":61540.20,"Jugueteria":35837.84,"Tecnologia":38856.62,"Sports":8978.64,"Hogar":1104.58},"2025-04":{"Outdoors":155845.56,"Jugueteria":39814.13,"Tecnologia":50016.86,"Sports":1557.99,"Hogar":2451.38},"2025-05":{"Outdoors":63919.51,"Jugueteria":101113.59,"Tecnologia":16891.16,"Sports":4378.72,"Hogar":59063.21},"2025-06":{"Outdoors":130838.10,"Jugueteria":113670.55,"Tecnologia":36088.07,"Sports":3381.59,"Hogar":570.80},"2025-07":{"Outdoors":61732.07,"Jugueteria":168123.28,"Tecnologia":39480.79,"Sports":2612.87,"Hogar":634.47},"2025-08":{"Outdoors":78049.18,"Jugueteria":131263.64,"Tecnologia":35493.91,"Sports":2101.65,"Hogar":706.51},"2025-09":{"Outdoors":167711.78,"Jugueteria":60356.30,"Tecnologia":18967.99,"Sports":-507.19,"Hogar":820.88},"2025-10":{"Outdoors":198809.99,"Jugueteria":35982.74,"Tecnologia":22577.91,"Sports":2610.44,"Hogar":769.82},"2025-11":{"Outdoors":236585.29,"Jugueteria":61867.78,"Tecnologia":19068.07,"Sports":3739.86,"Hogar":770.78},"2025-12":{"Outdoors":440175.70,"Jugueteria":83134.54,"Tecnologia":15197.86,"Sports":5880.16,"Hogar":133.76},"2026-01":{"Outdoors":339771.79,"Jugueteria":31826.37,"Tecnologia":10786.62,"Sports":2473.82,"Hogar":650.41},"2026-02":{"Outdoors":74353.14,"Jugueteria":17269.12,"Tecnologia":9208.72,"Sports":444.12,"Hogar":839.96}};
 
@@ -541,11 +554,18 @@ function updateAll() {
 // ===== VENTAS =====
 function updateVentas() {
   // KPIs
-  let totV=0,totC=0,totR=0;
+  let totV=0,totC=0,totR=0,totG=0;
   selectedMonths.forEach(m=>{
-    if(DATA_MONTHLY[m]){totV+=DATA_MONTHLY[m].Venta||0;totC+=DATA_MONTHLY[m].Costo||0;totR+=DATA_MONTHLY[m].Reposicion||0;}
+    if(DATA_MONTHLY[m]){
+      totV+=DATA_MONTHLY[m].Venta||0;
+      totC+=DATA_MONTHLY[m].Costo||0;
+      totR+=DATA_MONTHLY[m].Reposicion||0;
+      totG+=DATA_MONTHLY[m].Gastos||0;
+    }
   });
-  const mg = totV?((totV-totC)/totV*100).toFixed(1):0;
+  const mb   = totV?((totV-totC)/totV*100).toFixed(1):0;
+  const util = totV-totC-totG;
+  const pctUtil = totV?(util/totV*100).toFixed(1):0;
   document.getElementById('kpi-ventas').innerHTML = `
     <div class="kpi-card ven-card" style="--kpi-color:var(--accent3)">
       <div class="kpi-label">💰 Ventas Totales</div>
@@ -554,22 +574,22 @@ function updateVentas() {
       <div class="kpi-badge badge-green">${selectedMonths.length} mes${selectedMonths.length>1?'es':''}</div>
     </div>
     <div class="kpi-card" style="--kpi-color:var(--red)">
-      <div class="kpi-label">📦 Costo Mercadería</div>
+      <div class="kpi-label">📦 Costo Mercadería (CMV)</div>
       <div class="kpi-value">${fmtK(totC)}</div>
-      <div class="kpi-sub">${pct(totC,totV)} sobre ventas</div>
+      <div class="kpi-sub">${pct(totC,totV)} sobre ventas · MB ${mb}%</div>
       <div class="kpi-badge badge-yellow">CMV</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:var(--accent2)">
-      <div class="kpi-label">🔄 Reposición</div>
-      <div class="kpi-value">${fmtK(totR)}</div>
-      <div class="kpi-sub">Costo reposición stock</div>
-      <div class="kpi-badge badge-yellow">${pct(totR,totV)} ventas</div>
+    <div class="kpi-card" style="--kpi-color:var(--accent5)">
+      <div class="kpi-label">💸 Gastos Operativos</div>
+      <div class="kpi-value">${fmtK(totG)}</div>
+      <div class="kpi-sub">${pct(totG,totV)} sobre ventas</div>
+      <div class="kpi-badge badge-yellow">Gastos U$S</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:${mg>45?'var(--green)':'var(--red)'}">
-      <div class="kpi-label">📊 Margen Bruto</div>
-      <div class="kpi-value">${fmtK(totV-totC)}</div>
-      <div class="kpi-sub">Margen sobre ventas</div>
-      <div class="kpi-badge ${mg>45?'badge-green':'badge-red'}">${mg}%</div>
+    <div class="kpi-card" style="--kpi-color:${util>0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">📊 Utilidad Neta</div>
+      <div class="kpi-value">${fmtK(util)}</div>
+      <div class="kpi-sub">Venta − CMV − Gastos</div>
+      <div class="kpi-badge ${util>0?'badge-green':'badge-red'}">${pctUtil}%</div>
     </div>`;
 
   // Super Rubro chart
@@ -588,13 +608,16 @@ function updateVentas() {
 
   // Evolución
   const labels=MONTHS.map((_,i)=>MONTH_LABELS[i]);
-  const ventas=MONTHS.map(m=>DATA_MONTHLY[m]?.Venta||0);
-  const costos=MONTHS.map(m=>DATA_MONTHLY[m]?.Costo||0);
-  const repos=MONTHS.map(m=>DATA_MONTHLY[m]?.Reposicion||0);
+  const ventas =MONTHS.map(m=>DATA_MONTHLY[m]?.Venta||0);
+  const costos =MONTHS.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  const repos  =MONTHS.map(m=>DATA_MONTHLY[m]?.Reposicion||0);
+  const gastos =MONTHS.map(m=>DATA_MONTHLY[m]?.Gastos||0);
+  const utilid =MONTHS.map(m=>{const d=DATA_MONTHLY[m];return d?(d.Venta-d.Costo-d.Gastos):0;});
   updateMultiChart('chartEvolucion',labels,[
-    {label:'Venta U$S',data:ventas,color:'#4f8ef7'},
-    {label:'Costo U$S',data:costos,color:'#f74f4f'},
-    {label:'Reposición U$S',data:repos,color:'#f7c84f'}
+    {label:'Venta U$S',     data:ventas, color:'#4f8ef7'},
+    {label:'CMV U$S',       data:costos, color:'#f74f4f'},
+    {label:'Gastos U$S',    data:gastos, color:'#a64ff7'},
+    {label:'Utilidad Neta', data:utilid, color:'#2ecc71'}
   ],'line');
 
   // Top vendedores - filtrado por período
@@ -626,12 +649,18 @@ function updateVentas() {
 
 // ===== ECONOMICO =====
 function updateEconomico() {
-  let totV=0,totC=0,totR=0;
+  let totV=0,totC=0,totR=0,totG=0;
   selectedMonths.forEach(m=>{
-    if(DATA_MONTHLY[m]){totV+=DATA_MONTHLY[m].Venta||0;totC+=DATA_MONTHLY[m].Costo||0;totR+=DATA_MONTHLY[m].Reposicion||0;}
+    if(DATA_MONTHLY[m]){
+      totV+=DATA_MONTHLY[m].Venta||0;
+      totC+=DATA_MONTHLY[m].Costo||0;
+      totR+=DATA_MONTHLY[m].Reposicion||0;
+      totG+=DATA_MONTHLY[m].Gastos||0;
+    }
   });
-  const mg=(totV-totC)/totV*100;
-  const utilidad = totV-totC-totR;
+  const mb    = totV?(totV-totC)/totV*100:0;
+  const util  = totV-totC-totG;
+  const pctU  = totV?(util/totV*100).toFixed(1):0;
   document.getElementById('kpi-economico').innerHTML=`
     <div class="kpi-card eco-card">
       <div class="kpi-label">💵 Ventas Netas U$S</div>
@@ -641,47 +670,55 @@ function updateEconomico() {
     <div class="kpi-card" style="--kpi-color:var(--accent3)">
       <div class="kpi-label">📊 Margen Bruto</div>
       <div class="kpi-value">${fmtK(totV-totC)}</div>
-      <div class="kpi-sub">Margen ${mg.toFixed(1)}%</div>
-      <div class="kpi-badge ${mg>50?'badge-green':'badge-yellow'}">${mg.toFixed(1)}%</div>
+      <div class="kpi-sub">MB% ${mb.toFixed(1)}% sobre ventas</div>
+      <div class="kpi-badge ${mb>50?'badge-green':'badge-yellow'}">${mb.toFixed(1)}%</div>
     </div>
     <div class="kpi-card" style="--kpi-color:var(--accent5)">
-      <div class="kpi-label">🔄 Margen Reposición</div>
-      <div class="kpi-value">${fmtK(totV-totR)}</div>
-      <div class="kpi-sub">Ventas − Reposición</div>
+      <div class="kpi-label">💸 Gastos Operativos</div>
+      <div class="kpi-value">${fmtK(totG)}</div>
+      <div class="kpi-sub">${pct(totG,totV)} sobre ventas</div>
+      <div class="kpi-badge badge-yellow">Gastos U$S</div>
     </div>
-    <div class="kpi-card" style="--kpi-color:${utilidad>0?'var(--green)':'var(--red)'}">
-      <div class="kpi-label">💹 Resultado Preliminar</div>
-      <div class="kpi-value">${fmtK(utilidad)}</div>
-      <div class="kpi-sub">Venta − CMV − Repos.</div>
-      <div class="kpi-badge ${utilidad>0?'badge-green':'badge-red'}">${pct(utilidad,totV)}</div>
+    <div class="kpi-card" style="--kpi-color:${util>0?'var(--green)':'var(--red)'}">
+      <div class="kpi-label">💹 Utilidad Neta</div>
+      <div class="kpi-value">${fmtK(util)}</div>
+      <div class="kpi-sub">Venta − CMV − Gastos</div>
+      <div class="kpi-badge ${util>0?'badge-green':'badge-red'}">${pctU}%</div>
     </div>`;
 
   // Margen bruto barras
   const selLabels=selectedMonths.map(m=>MONTH_LABELS[MONTHS.indexOf(m)]);
-  const sVentas=selectedMonths.map(m=>DATA_MONTHLY[m]?.Venta||0);
-  const sCostos=selectedMonths.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  const sVentas =selectedMonths.map(m=>DATA_MONTHLY[m]?.Venta||0);
+  const sCostos =selectedMonths.map(m=>DATA_MONTHLY[m]?.Costo||0);
+  const sGastos =selectedMonths.map(m=>DATA_MONTHLY[m]?.Gastos||0);
+  const sUtilidad=selectedMonths.map(m=>{const d=DATA_MONTHLY[m];return d?(d.Venta-d.Costo-d.Gastos):0;});
   updateMultiChart('chartMargenBruto',selLabels,[
-    {label:'Venta U$S',data:sVentas,color:'#4f8ef7'},
-    {label:'Costo U$S',data:sCostos,color:'#f74f4f'}
+    {label:'Venta U$S',    data:sVentas,   color:'#4f8ef7'},
+    {label:'CMV U$S',      data:sCostos,   color:'#f74f4f'},
+    {label:'Gastos U$S',   data:sGastos,   color:'#a64ff7'},
+    {label:'Utilidad Neta',data:sUtilidad, color:'#2ecc71'}
   ],'bar');
 
-  // % margen
-  const pctMargen=selectedMonths.map(m=>{
-    const d=DATA_MONTHLY[m];
-    if(!d||!d.Venta) return 0;
-    return +((d.Venta-d.Costo)/d.Venta*100).toFixed(1);
-  });
-  updateChart('chartPctMargen','line',selLabels,pctMargen,['#00d4aa'],true,'',true,'%');
+  // % Utilidad neta y % MB por período
+  const pctMB     =selectedMonths.map(m=>{const d=DATA_MONTHLY[m];return d&&d.Venta?+((d.Venta-d.Costo)/d.Venta*100).toFixed(1):0;});
+  const pctUtilNet=selectedMonths.map(m=>{const d=DATA_MONTHLY[m];return d&&d.Venta?+((d.Venta-d.Costo-d.Gastos)/d.Venta*100).toFixed(1):0;});
+  updateMultiChart('chartPctMargen',selLabels,[
+    {label:'% Margen Bruto',  data:pctMB,      color:'#00d4aa'},
+    {label:'% Utilidad Neta', data:pctUtilNet, color:'#f7c84f'}
+  ],'line');
 
   // Eco completo
   const allL=MONTHS.map((_,i)=>MONTH_LABELS[i]);
   const aV=MONTHS.map(m=>DATA_MONTHLY[m]?.Venta||0);
   const aC=MONTHS.map(m=>DATA_MONTHLY[m]?.Costo||0);
   const aR=MONTHS.map(m=>DATA_MONTHLY[m]?.Reposicion||0);
+  const aG=MONTHS.map(m=>DATA_MONTHLY[m]?.Gastos||0);
+  const aU=MONTHS.map(m=>{const d=DATA_MONTHLY[m]; return d?(d.Venta-d.Costo-d.Gastos):0;});
   updateMultiChart('chartEcoCompleto',allL,[
-    {label:'Venta U$S',data:aV,color:'#4f8ef7'},
-    {label:'Costo U$S',data:aC,color:'#f74f4f'},
-    {label:'Reposición U$S',data:aR,color:'#f7c84f'}
+    {label:'Venta U$S',    data:aV, color:'#4f8ef7'},
+    {label:'CMV U$S',      data:aC, color:'#f74f4f'},
+    {label:'Gastos U$S',   data:aG, color:'#a64ff7'},
+    {label:'Utilidad Neta',data:aU, color:'#2ecc71'}
   ],'bar');
 
   // Donut rubro
@@ -929,41 +966,38 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
   destroyChart(id);
   const ctx=document.getElementById(id)?.getContext('2d');
   if(!ctx) return;
-  const isHoriz = orient==='horizontal';
+  const isHoriz  = orient==='horizontal';
   const isDoughnut = type==='doughnut';
-  // Doughnut siempre muestra leyenda; barras horizontales también
-  const displayLegend = isDoughnut || showLegend || isHoriz;
-  const legendPos = isDoughnut ? 'right' : isHoriz ? 'top' : 'top';
+  const displayLegend = isDoughnut || (showLegend && !isHoriz);
+  // Para barras horizontales NO mostrar leyenda (los nombres ya están en el eje Y)
   charts[id]=new Chart(ctx,{
-    type:type==='bar'&&isHoriz?'bar':type,
+    type: isDoughnut ? 'doughnut' : 'bar',
     data:{
       labels,
       datasets:[{
+        label: 'Venta U$S',
         data,
-        backgroundColor:Array.isArray(colors)?colors:labels.map((_,i)=>colors[i%colors.length]),
-        borderColor:type==='line'?colors[0]:'rgba(255,255,255,.08)',
-        borderWidth:type==='line'?2:isDoughnut?2:0,
-        fill:type==='line'?false:undefined,
-        tension:tension?0.3:0,
-        pointRadius:type==='line'?3:0
+        backgroundColor: Array.isArray(colors) ? colors : labels.map((_,i)=>colors[i%colors.length]),
+        borderColor: type==='line' ? colors[0] : 'rgba(255,255,255,.06)',
+        borderWidth: isDoughnut ? 2 : 0,
+        borderRadius: isHoriz ? 4 : 0
       }]
     },
     options:{
-      indexAxis:isHoriz?'y':'x',
-      responsive:true,maintainAspectRatio:false,
+      indexAxis: isHoriz ? 'y' : 'x',
+      responsive: true,
+      maintainAspectRatio: false,
       plugins:{
         legend:{
-          display:displayLegend,
-          position:legendPos,
+          display: displayLegend,
+          position: isDoughnut ? 'right' : 'top',
           labels:{
-            color:'#ffffff',
-            font:{size:10},
-            padding:10,
-            boxWidth:isDoughnut?14:10,
-            boxHeight:isDoughnut?14:10,
-            usePointStyle:isDoughnut,
-            pointStyleWidth:isDoughnut?10:undefined,
-            // Para doughnut mostrar valor en la leyenda
+            color: '#ffffff',
+            font: {size:11},
+            padding: 12,
+            boxWidth: isDoughnut ? 14 : 10,
+            boxHeight: isDoughnut ? 14 : 10,
+            usePointStyle: isDoughnut,
             generateLabels: isDoughnut ? function(chart) {
               const ds = chart.data.datasets[0];
               const total = ds.data.reduce((a,b)=>a+(b||0),0);
@@ -973,12 +1007,12 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
                 return {
                   text: label+': '+fmtK(val)+' ('+pct+'%)',
                   fillStyle: Array.isArray(ds.backgroundColor)?ds.backgroundColor[i]:ds.backgroundColor,
-                  strokeStyle: 'transparent',
-                  fontColor: '#ffffff',
-                  color: '#ffffff',
-                  pointStyle: 'circle',
-                  hidden: false,
-                  index: i
+                  strokeStyle:'transparent',
+                  fontColor:'#ffffff',
+                  color:'#ffffff',
+                  pointStyle:'circle',
+                  hidden:false,
+                  index:i
                 };
               });
             } : undefined
@@ -987,18 +1021,43 @@ function updateChart(id,type,labels,data,colors,showLegend,orient,tension,yUnit)
         tooltip:{
           callbacks:{
             label: isDoughnut
-              ? function(c) {
-                  const total = c.dataset.data.reduce((a,b)=>a+(b||0),0);
-                  const pct = total>0?((c.raw/total)*100).toFixed(1):'0';
+              ? function(c){
+                  const total=c.dataset.data.reduce((a,b)=>a+(b||0),0);
+                  const pct=total>0?((c.raw/total)*100).toFixed(1):'0';
                   return ' '+c.label+': '+fmtK(c.raw)+' ('+pct+'%)';
                 }
-              : c=>' '+(c.dataset.label||'')+': '+(type==='line'&&yUnit?c.raw+yUnit:fmtK(c.raw))
-          }
+              : c=>' '+fmtK(c.raw)+(yUnit?yUnit:'')
+          },
+          backgroundColor:'rgba(20,23,35,.97)',
+          titleColor:'#ffffff',
+          bodyColor:'#ffffff',
+          borderColor:'rgba(79,142,247,.4)',
+          borderWidth:1,
+          padding:10
         }
       },
-      scales:isDoughnut?{}:{
-        x:{ticks:{color:'#ffffff',font:{size:10},maxRotation:isHoriz?0:35},grid:{color:'rgba(42,45,62,.4)'}},
-        y:{ticks:{color:'#ffffff',font:{size:10},callback:v=>type==='line'&&yUnit?v+yUnit:fmtK(v)},grid:{color:'rgba(42,45,62,.4)'}}
+      scales: isDoughnut ? {} : {
+        x:{
+          ticks:{
+            color:'#ffffff',
+            font:{size:10},
+            maxRotation: isHoriz ? 0 : 35,
+            // Eje X de barra horizontal = valores → formato moneda
+            // Eje X de barra vertical = labels → sin formato
+            callback: isHoriz ? v=>fmtK(v) : undefined
+          },
+          grid:{color:'rgba(255,255,255,.06)'}
+        },
+        y:{
+          ticks:{
+            color:'#ffffff',
+            font:{size: isHoriz ? 11 : 10},
+            // Eje Y de barra horizontal = nombres → NO aplicar formato moneda
+            // Eje Y de barra vertical = valores → formato moneda
+            callback: isHoriz ? v=>v : (yUnit ? v=>v+yUnit : v=>fmtK(v))
+          },
+          grid:{color:'rgba(255,255,255,.06)'}
+        }
       }
     }
   });
