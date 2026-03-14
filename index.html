@@ -75,6 +75,8 @@
 
   /* === KPI CARDS === */
   .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 20px; }
+  .kpi-grid-ticket { grid-template-columns: repeat(2,1fr) !important; margin-top: -8px; }
+  .ticket-icon { font-size: 28px; margin-bottom: 4px; }
   .kpi-card {
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
     padding: 18px 20px; position: relative; overflow: hidden;
@@ -238,6 +240,9 @@
 
   <!-- KPIs -->
   <div class="kpi-grid" id="kpi-ventas"></div>
+
+  <!-- Ticket Promedio -->
+  <div class="kpi-grid kpi-grid-ticket" id="kpi-tickets"></div>
 
   <!-- Row 1: Super Rubro + Grupo Ventas -->
   <div class="chart-grid-2">
@@ -452,6 +457,9 @@ const DATA_MONTHLY = {
 };
 
 const DATA_SR_MONTHLY = {"2025-03":{"Outdoors":61540.20,"Jugueteria":35837.84,"Tecnologia":38856.62,"Sports":8978.64,"Hogar":1104.58},"2025-04":{"Outdoors":155845.56,"Jugueteria":39814.13,"Tecnologia":50016.86,"Sports":1557.99,"Hogar":2451.38},"2025-05":{"Outdoors":63919.51,"Jugueteria":101113.59,"Tecnologia":16891.16,"Sports":4378.72,"Hogar":59063.21},"2025-06":{"Outdoors":130838.10,"Jugueteria":113670.55,"Tecnologia":36088.07,"Sports":3381.59,"Hogar":570.80},"2025-07":{"Outdoors":61732.07,"Jugueteria":168123.28,"Tecnologia":39480.79,"Sports":2612.87,"Hogar":634.47},"2025-08":{"Outdoors":78049.18,"Jugueteria":131263.64,"Tecnologia":35493.91,"Sports":2101.65,"Hogar":706.51},"2025-09":{"Outdoors":167711.78,"Jugueteria":60356.30,"Tecnologia":18967.99,"Sports":-507.19,"Hogar":820.88},"2025-10":{"Outdoors":198809.99,"Jugueteria":35982.74,"Tecnologia":22577.91,"Sports":2610.44,"Hogar":769.82},"2025-11":{"Outdoors":236585.29,"Jugueteria":61867.78,"Tecnologia":19068.07,"Sports":3739.86,"Hogar":770.78},"2025-12":{"Outdoors":440175.70,"Jugueteria":83134.54,"Tecnologia":15197.86,"Sports":5880.16,"Hogar":133.76},"2026-01":{"Outdoors":339771.79,"Jugueteria":31826.37,"Tecnologia":10786.62,"Sports":2473.82,"Hogar":650.41},"2026-02":{"Outdoors":74353.14,"Jugueteria":17269.12,"Tecnologia":9208.72,"Sports":444.12,"Hogar":839.96}};
+
+const DATA_CLIENTS_MONTHLY = {"2025-03":82,"2025-04":76,"2025-05":104,"2025-06":110,"2025-07":147,"2025-08":109,"2025-09":96,"2025-10":91,"2025-11":94,"2025-12":195,"2026-01":176,"2026-02":44};
+const DATA_UNITS_MONTHLY = {"2025-03":8264,"2025-04":14800,"2025-05":10329,"2025-06":13867,"2025-07":23582,"2025-08":13770,"2025-09":12048,"2025-10":9600,"2025-11":24865,"2025-12":19685,"2026-01":19924,"2026-02":8448};
 
 const DATA_GV_MONTHLY = {"2025-03":{"Indirectas":94930.31,"Ecommerce":25007.49,"Vdores. Directas":15049.63,"Hipermercados":8071.58,"Gerencia":3258.87},"2025-04":{"Indirectas":132736.39,"Hipermercados":59995.94,"Ecommerce":28536.74,"Vdores. Directas":27317.01,"Gerencia":1099.86},"2025-05":{"Indirectas":136084.18,"Vdores. Directas":33903.32,"Gerencia":59416.52,"Ecommerce":13712.95,"Hipermercados":2249.22},"2025-06":{"Indirectas":128478.21,"Hipermercados":80595.61,"Vdores. Directas":34166.42,"Gerencia":29598.20,"Ecommerce":11710.67},"2025-07":{"Indirectas":152253.58,"Vdores. Directas":52976.32,"Gerencia":31875.16,"Ecommerce":17216.08,"Hipermercados":18262.33},"2025-08":{"Indirectas":192027.96,"Gerencia":28604.51,"Ecommerce":20542.50,"Vdores. Directas":6439.90},"2025-09":{"Indirectas":194297.87,"Gerencia":25215.83,"Ecommerce":16399.45,"Vdores. Directas":11460.34},"2025-10":{"Indirectas":214127.91,"Vdores. Directas":29264.10,"Ecommerce":19076.37},"2025-11":{"Indirectas":143038.77,"Hipermercados":119922.54,"Vdores. Directas":31816.32,"Ecommerce":18010.94,"Gerencia":9243.20},"2025-12":{"Indirectas":420094.40,"Ecommerce":73442.52,"Gerencia":25708.69,"Vdores. Directas":25276.41},"2026-01":{"Indirectas":239934.17,"Ecommerce":121682.62,"Gerencia":6249.74,"Vdores. Directas":17642.48},"2026-02":{"Gerencia":40974.23,"Ecommerce":39110.55,"Hipermercados":10306.00,"Indirectas":9637.90,"Vdores. Directas":2086.37}};
 
@@ -1976,6 +1984,36 @@ function updateVentas() {
       <div class="kpi-value">${fmtK(util)}</div>
       <div class="kpi-sub">Venta − CMV − Gastos Op.</div>
       <div class="kpi-badge ${util>0?'badge-green':'badge-red'}">${pctUtil}%</div>
+    </div>`;
+
+  // Ticket promedio
+  let totClientes=0, totUnidades=0;
+  const clientSet = new Set();
+  // Calcular clientes únicos acumulados y unidades del período
+  selectedMonths.forEach(m=>{
+    if(DATA_UNITS_MONTHLY[m]) totUnidades += DATA_UNITS_MONTHLY[m];
+    if(DATA_CLIENTS_MONTHLY[m]) totClientes += DATA_CLIENTS_MONTHLY[m];
+  });
+  const ticketCliente = totClientes>0 ? totV/totClientes : 0;
+  const ticketUnidad  = totUnidades>0 ? totV/totUnidades : 0;
+
+  const fmtUSD = v => 'U$S ' + v.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtNum = v => v.toLocaleString('es-AR');
+
+  document.getElementById('kpi-tickets').innerHTML = `
+    <div class="kpi-card" style="--kpi-color:var(--accent2)">
+      <div class="ticket-icon">🧑‍🤝‍🧑</div>
+      <div class="kpi-label">Ticket Promedio por Cliente</div>
+      <div class="kpi-value" style="font-size:22px">${fmtUSD(ticketCliente)}</div>
+      <div class="kpi-sub">Venta total ÷ clientes facturados en el período</div>
+      <div class="kpi-badge badge-green">${fmtNum(totClientes)} clientes</div>
+    </div>
+    <div class="kpi-card" style="--kpi-color:var(--accent4)">
+      <div class="ticket-icon">📦</div>
+      <div class="kpi-label">Ticket Promedio por Unidad</div>
+      <div class="kpi-value" style="font-size:22px">${fmtUSD(ticketUnidad)}</div>
+      <div class="kpi-sub">Venta total ÷ unidades vendidas en el período</div>
+      <div class="kpi-badge badge-yellow">${fmtNum(totUnidades)} unidades</div>
     </div>`;
 
   // Super Rubro chart
